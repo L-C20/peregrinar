@@ -1,0 +1,80 @@
+# =====================================================
+# DESPLIEGUE EN RENDER
+#
+# Con este archivo en la raíz del repositorio, en Render
+# alcanza con "New → Blueprint" y elegir el repo: crea el
+# servicio web y la base de datos con todo configurado.
+#
+# Las variables marcadas "sync: false" NO se guardan acá:
+# son secretos y se cargan a mano en el panel de Render.
+# Ver PRODUCCION.md.
+# =====================================================
+
+services:
+  - type: web
+    name: peregrinar-platform
+    runtime: node
+    plan: free
+    region: oregon
+
+    # El backend vive en backend/, pero sirve también el
+    # frontend, que está un nivel más arriba en el repo.
+    rootDir: backend
+
+    # Las migraciones corren en el build: cuando la versión
+    # nueva se pone en línea, el esquema ya está al día.
+    buildCommand: npm ci && npm run migrate
+    startCommand: npm start
+
+    # Render consulta esta ruta para saber si el servicio
+    # está sano antes de mandarle tráfico.
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Render lo genera y no lo ve nadie más.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # Se conecta sola con la base de acá abajo.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: peregrinar-db
+          property: connectionString
+
+      - key: DATABASE_SSL
+        value: "true"
+
+      # Qué tienda atiende un dominio que no esté cargado en
+      # tenant_dominios. Imprescindible mientras haya una sola.
+      - key: DEFAULT_TENANT_SLUG
+        value: editorial-peregrinar
+
+      # El disco de Render se borra en cada despliegue: con
+      # "local" el cliente sube fotos y las pierde.
+      - key: STORAGE_DRIVER
+        value: cloudinary
+
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+      # La dirección definitiva de la tienda. Se completa
+      # después del primer despliegue, cuando Render asigna
+      # el subdominio o cuando se conecta el dominio propio.
+      - key: PUBLIC_URL
+        sync: false
+
+      - key: MAX_UPLOAD_MB
+        value: "5"
+
+databases:
+  - name: peregrinar-db
+    plan: free
+    databaseName: peregrinar
+    user: peregrinar

@@ -27,18 +27,19 @@
 const config = require("../config/env");
 const logger = require("../utils/logger");
 
-const localDriver = require("./localDriver");
 
-
+// Se carga solo el driver elegido. Si se cargaran los dos, el de
+// Cloudinary abortaría el arranque por falta de credenciales aunque
+// no se lo esté usando.
 const DRIVERS = {
-    local: localDriver
-    // cloudinary: require("./cloudinaryDriver")   ← Etapa 12
+    local: () => require("./localDriver"),
+    cloudinary: () => require("./cloudinaryDriver")
 };
 
 
-const driver = DRIVERS[config.almacenamiento.driver];
+const elegido = DRIVERS[config.almacenamiento.driver];
 
-if (!driver) {
+if (!elegido) {
     console.error(
         `\n[storage] STORAGE_DRIVER="${config.almacenamiento.driver}" no existe.` +
         `\n          Disponibles: ${Object.keys(DRIVERS).join(", ")}\n`
@@ -46,12 +47,15 @@ if (!driver) {
     process.exit(1);
 }
 
+const driver = elegido();
 
-// Aviso util: el disco local no sobrevive a un deploy de Render.
+
+// El disco de Render se borra en cada despliegue: si esto queda en
+// "local" en producción, el cliente sube fotos y las pierde.
 if (config.esProduccion && driver.nombre === "local") {
     logger.aviso(
         "STORAGE_DRIVER=local en producción: las imágenes subidas se " +
-        "perderán en cada despliegue. Configurá un almacenamiento externo."
+        "perderán en cada despliegue. Configurá STORAGE_DRIVER=cloudinary."
     );
 }
 

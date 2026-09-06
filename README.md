@@ -363,6 +363,24 @@ Cada ruta pasa por `requirePermiso("productos.editar")` y por
 
 Ver `backend/.env.example`. `backend/.env` no se versiona.
 
+## Publicar
+
+`render.yaml` deja el despliegue en Render armado: crea el servicio y la base
+de datos, genera el `JWT_SECRET` y las conecta. Los pasos completos —incluida
+la cuenta de Cloudinary, que **no es opcional** porque el disco de Render se
+borra en cada despliegue— están en [PRODUCCION.md](PRODUCCION.md).
+
+En producción cambian tres cosas por su cuenta:
+
+- `trust proxy`, para que el límite de intentos cuente la IP real del visitante
+  y no la del proxy de Render. Sin esto, el primero que fallara ocho veces al
+  ingresar dejaría afuera a todo el mundo.
+- Cabeceras de seguridad, incluida HSTS y una política de contenido que no
+  permite scripts de terceros.
+- Aviso al arrancar si `STORAGE_DRIVER` quedó en `local`.
+
+---
+
 ## Estado
 
 | Etapa | Contenido | Estado |
@@ -378,4 +396,4 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 | 9 | Editor de apariencia | pendiente |
 | 10 | Clientes, pedidos y carrito | ✅ |
 | 11 | Contenido: banners, galerías, contacto, pagos, módulos | pendiente |
-| 12 | Producción | pendiente |
+| 12 | Producción | ✅ |

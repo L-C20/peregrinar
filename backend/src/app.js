@@ -26,6 +26,73 @@ const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
 
 // -----------------------------------------------------
+// DETRAS DE UN PROXY
+//
+// En Render y Railway la petición llega por un proxy. Sin
+// esto, req.ip es siempre la IP del proxy: el límite de
+// intentos de login y el de pedidos contarían a todos los
+// visitantes como si fueran una sola persona, y el primero
+// que fallara ocho veces dejaría afuera a todo el mundo.
+//
+// Un solo proxy de confianza, el del hosting.
+// -----------------------------------------------------
+
+if (config.esProduccion) app.set("trust proxy", 1);
+
+
+// -----------------------------------------------------
+// CABECERAS DE SEGURIDAD
+//
+// Se escriben a mano en vez de sumar una dependencia: son
+// seis cabeceras y así se ve exactamente qué se manda.
+// -----------------------------------------------------
+
+app.use((req, res, next) => {
+
+    // No adivinar el tipo de un archivo por su contenido: evita que
+    // algo subido como imagen se termine ejecutando como script.
+    res.set("X-Content-Type-Options", "nosniff");
+
+    // No se puede meter la tienda ni el panel dentro de un iframe.
+    res.set("X-Frame-Options", "DENY");
+
+    res.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+    // Nada de cámara, micrófono ni ubicación.
+    res.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+    if (config.esProduccion) {
+        // Solo por HTTPS, durante un año.
+        res.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    }
+
+    // Qué puede cargar la página y desde dónde.
+    //
+    // 'unsafe-inline' en estilos es necesario: la apariencia de cada
+    // tienda se aplica escribiendo variables CSS en el documento.
+    // En scripts NO está, que es donde importa.
+    res.set("Content-Security-Policy", [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com",
+        // Las imágenes pueden venir de Cloudinary o de donde el
+        // cliente configure; blob: es para la vista previa al subir.
+        "img-src 'self' data: blob: https:",
+        "connect-src 'self'",
+        // El mapa de la página de contacto lo elige el cliente.
+        "frame-src https:",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "object-src 'none'"
+    ].join("; "));
+
+    next();
+});
+
+
+// -----------------------------------------------------
 // CORS
 // Sin CORS_ORIGINS solo se acepta el mismo origen, que es
 // lo correcto cuando Express sirve tambien el frontend.
