@@ -41,7 +41,7 @@ Abrir http://localhost:3000
 backend/src/
 ├── config/env.js        Único lugar que lee process.env
 ├── database/            Conexión, migraciones versionadas, seed
-├── middleware/          auth · roles · tenantResolver · upload · errorHandler
+├── middleware/          auth · roles · tenantResolver · modulo · upload · errorHandler
 ├── storage/             Driver de archivos (local hoy, externo después)
 ├── routes/
 │   ├── public/          Tienda. Sin token. Tenant por dominio.
@@ -133,6 +133,49 @@ Está en el esquema:
 
 ---
 
+## De dónde sale el tenant en cada petición
+
+| Superficie | Origen | Queda en |
+|---|---|---|
+| `/api/public/*` | header `Host` → tabla `tenant_dominios`; si el dominio no está registrado, `DEFAULT_TENANT_SLUG` | `req.tenant` |
+| `/api/admin/*` | el JWT del usuario | `req.usuario.tenant_id` |
+| `/api/platform/*` | lo elige el superadmin | — |
+
+`tenantDe(req)` en `middleware/tenantResolver.js` es el único lugar que contesta
+esa pregunta. Un `tenant_id` que llegue en el body, el query o un header **se
+ignora siempre**. Si una ruta consulta la base sin haber resuelto el tenant, la
+consulta ni se intenta: `repositories/base.js` lanza un error de programación.
+
+En desarrollo se puede pedir otra tienda con `?tienda=<slug>` para probar el
+aislamiento sobre localhost. En producción se ignora: manda el dominio.
+
+Los módulos de cada tienda se controlan con `moduloActivo("galeria")` en la
+definición de la ruta. Si la tienda no lo tiene contratado, la petición corta
+con 403 y un mensaje entendible.
+
+---
+
+## Archivos e imágenes
+
+Todo pasa por `storage/`, que hoy usa el disco local y mañana puede usar
+Cloudinary sin tocar nada más:
+
+```js
+const { clave } = await storage.guardar({
+    carpeta: "productos",          // lista cerrada, nunca viene del cliente
+    tenantSlug: tenant.slug,       // cada tienda en su propia carpeta
+    buffer: archivo.buffer,
+    mime: archivo.mimetype         // la extensión sale del tipo, no del nombre
+});
+
+storage.url(clave)   // -> /uploads/productos/editorial-peregrinar/1712-a3f9.png
+```
+
+multer recibe los archivos **en memoria**; quién los escribe y dónde lo decide
+el driver. En la base se guarda `clave`, nunca la URL.
+
+---
+
 ## Variables de entorno
 
 Ver `backend/.env.example`. `backend/.env` no se versiona.
@@ -144,7 +187,7 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 | 1 | Análisis | ✅ |
 | 2 | Arquitectura y contratos transversales | ✅ |
 | 3 | Base de datos y migraciones | ✅ |
-| 4 | Núcleo del backend (tenant, storage) | pendiente |
+| 4 | Núcleo del backend (tenant, storage) | ✅ |
 | 5 | Autenticación y roles | pendiente |
 | 6 | API pública + productos y categorías | pendiente |
 | 7 | Panel administrativo | pendiente |

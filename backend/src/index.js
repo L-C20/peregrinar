@@ -7,10 +7,16 @@ const logger = require("./utils/logger");
 const app = require("./app");
 const { probarConexion, pool } = require("./database/connection");
 
+// Se carga en el arranque a proposito: valida STORAGE_DRIVER y
+// avisa si en produccion se quedo el disco local. Si esperara a
+// la primera subida, el problema aparecería recién en producción.
+const storage = require("./storage");
+
 
 async function iniciar() {
 
     logger.info(`Iniciando peregrinar-platform (${config.entorno})`);
+    logger.info(`Almacenamiento de archivos: ${storage.nombre}`);
 
 
     // La base puede no existir todavia: se avisa, no se aborta.
