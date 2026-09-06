@@ -28,8 +28,14 @@ const router = express.Router();
 router.use(tenantResolver);
 
 
-// Identidad y módulos habilitados de la tienda.
+// Identidad, apariencia, contacto, redes y módulos: todo lo
+// que necesita cualquier página al cargar, en una sola vuelta.
 router.get("/tienda", tienda.identidad);
+
+// Contenido editable desde el panel.
+router.get("/faq", tienda.faq);
+router.get("/banners", tienda.banners);
+router.get("/paginas/:clave", tienda.pagina);
 
 
 // ---------- CATALOGO ----------

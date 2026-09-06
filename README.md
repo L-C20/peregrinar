@@ -178,6 +178,30 @@ el driver. En la base se guarda `clave`, nunca la URL.
 
 ---
 
+## La tienda
+
+| Dirección | Qué es |
+|---|---|
+| `/` | Portada: bienvenida, categorías, destacados, novedades |
+| `/catalogo` | Catálogo con filtros, búsqueda y paginación |
+| `/producto/:slug` | Detalle con galería y relacionados |
+| `/p/:clave` | Páginas de texto (nosotros, trabajos personalizados…) |
+| `/preguntas-frecuentes` · `/contacto` | |
+
+`tienda.css` no tiene **ni un color ni una tipografía literal**: todo sale de
+las variables de `shared/css/tokens.css`, que `tienda.js` pisa al cargar con lo
+que el cliente guardó en su apariencia. Por eso el editor de apariencia
+(Etapa 9) va a poder cambiar la tienda entera sin tocar una línea de CSS.
+
+Los filtros del catálogo viven en la URL, no en una variable: así se puede
+compartir "las biblias en oferta" por WhatsApp, el botón atrás funciona y
+recargar no pierde lo que se estaba mirando.
+
+Las páginas del menú salen de la base: si el cliente crea una página nueva
+desde el panel, aparece sola en el menú y en el pie.
+
+---
+
 ## Ingreso y roles
 
 El login resuelve **primero la tienda** por el dominio y **después** busca al
@@ -237,6 +261,15 @@ con la paginación.
 Solo devuelve productos disponibles, y nunca expone `tenant_id`, el stock
 exacto ni las fechas internas.
 
+| `GET /faq` | Preguntas frecuentes |
+| `GET /paginas/:clave` | Nosotros, trabajos personalizados, lo que el cliente cree |
+| `GET /banners` | Banners de la portada |
+
+`GET /tienda` devuelve todo lo que cualquier página necesita al cargar
+—identidad, apariencia, contacto, redes, medios de pago, módulos y qué páginas
+existen— en una sola vuelta. Separarlo serían cinco viajes para dibujar el
+encabezado.
+
 ### Panel — `/api/admin` · token obligatorio, tenant del JWT
 
 | | |
@@ -286,7 +319,7 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 | 5 | Autenticación y roles | ✅ |
 | 6 | API pública + productos y categorías | ✅ |
 | 7 | Panel administrativo | pendiente |
-| 8 | Tienda pública | pendiente |
+| 8 | Tienda pública | ✅ |
 | 9 | Editor de apariencia | pendiente |
 | 10 | Clientes, pedidos y carrito | pendiente |
 | 11 | Contenido: banners, galerías, contacto, pagos, módulos | pendiente |

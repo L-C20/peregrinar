@@ -85,12 +85,36 @@ app.use("/api", rutasApi);
 // /         tienda publica
 // -----------------------------------------------------
 
+const PUBLICO = path.join(FRONTEND, "publico");
+
 app.use("/uploads", express.static(UPLOADS, { maxAge: "7d" }));
 app.use("/shared", express.static(path.join(FRONTEND, "shared")));
 app.use("/assets", express.static(path.join(FRONTEND, "assets"), { maxAge: "7d" }));
 app.use("/admin", express.static(path.join(FRONTEND, "admin")));
 app.use("/login", express.static(path.join(FRONTEND, "auth")));
-app.use(express.static(path.join(FRONTEND, "publico")));
+app.use(express.static(PUBLICO));
+
+
+// -----------------------------------------------------
+// DIRECCIONES DE LA TIENDA
+//
+// Sin esto las páginas serían /producto.html?slug=biblia.
+// Se sirve el mismo archivo y el JavaScript lee el dato de
+// la dirección, así el comprador comparte un enlace legible
+// y los buscadores lo indexan mejor.
+//
+// Van DESPUES de express.static para que un archivo real
+// siempre gane.
+// -----------------------------------------------------
+
+const pagina = (archivo) =>
+    (req, res) => res.sendFile(path.join(PUBLICO, archivo));
+
+app.get("/catalogo", pagina("catalogo.html"));
+app.get("/producto/:slug", pagina("producto.html"));
+app.get("/p/:clave", pagina("pagina.html"));
+app.get("/preguntas-frecuentes", pagina("faq.html"));
+app.get("/contacto", pagina("contacto.html"));
 
 
 // -----------------------------------------------------
