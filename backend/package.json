@@ -11,7 +11,11 @@
     "seed": "node src/database/seed.js",
     "crear-tenant": "node scripts/crear-tenant.js",
     "crear-usuario": "node scripts/crear-usuario.js",
-    "verificar": "node scripts/verificar-aislamiento.js"
+    "verificar": "node scripts/verificar-aislamiento.js",
+    "bd:iniciar": "node scripts/bd.js iniciar",
+    "bd:detener": "node scripts/bd.js detener",
+    "bd:estado": "node scripts/bd.js estado",
+    "bd:borrar": "node scripts/bd.js borrar"
   },
   "license": "ISC",
   "dependencies": {

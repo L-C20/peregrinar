@@ -13,7 +13,8 @@ de frontend, sin build.
 ```bash
 cd backend
 npm install
-cp .env.example .env      # completar DATABASE_URL y JWT_SECRET
+cp .env.example .env      # completar JWT_SECRET
+npm run bd:iniciar        # PostgreSQL del proyecto, sin contraseña
 npm run migrate           # crea la base y aplica el esquema
 npm run seed              # carga Editorial Peregrinar (una sola vez)
 npm run dev
@@ -22,6 +23,28 @@ npm run dev
 Abrir http://localhost:3000
 
 `npm run seed` imprime el email y la contraseña del administrador una única vez.
+
+### La base de datos de desarrollo
+
+`npm run bd:iniciar` crea un PostgreSQL propio del proyecto, en
+`.datos-postgres/`, puerto 5433 y **sin contraseña**. No toca la instalación de
+PostgreSQL de la máquina y no hay ninguna contraseña que recordar; borrar la
+base de desarrollo es borrar una carpeta.
+
+Sin contraseña está bien acá y estaría muy mal en producción: solo acepta
+conexiones desde la misma computadora y solo tiene datos de prueba. En
+producción la base es la de Render o Railway, con su contraseña, y eso se
+configura en `DATABASE_URL`.
+
+**Después de reiniciar la computadora hay que volver a levantarla**
+(`npm run bd:iniciar`): no arranca sola.
+
+| Comando | |
+|---|---|
+| `npm run bd:iniciar` | La crea si no existe y la enciende |
+| `npm run bd:detener` | La apaga |
+| `npm run bd:estado` | Dice si está corriendo |
+| `npm run bd:borrar -- --si` | La elimina entera |
 
 ### Comandos
 

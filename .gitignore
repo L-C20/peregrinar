@@ -1,4 +1,7 @@
 node_modules/
+
+# Base de datos de desarrollo (npm run bd:iniciar)
+.datos-postgres/
 .env
 .env.local
 
