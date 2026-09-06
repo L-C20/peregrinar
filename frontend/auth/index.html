@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Ingresar al panel</title>
+
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <main class="acceso">
+        <div class="acceso__caja">
+
+            <div class="acceso__marca">
+                <h1 class="acceso__tienda" id="nombreTienda"></h1>
+                <p class="acceso__subtitulo">Panel de administración</p>
+            </div>
+
+            <div class="acceso__aviso" id="aviso" hidden>
+                <span aria-hidden="true">✕</span>
+                <span id="avisoTexto"></span>
+            </div>
+
+            <form id="formulario" novalidate>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="email">Email</label>
+                    <input
+                        class="campo__control"
+                        type="email"
+                        id="email"
+                        name="email"
+                        autocomplete="username"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        required>
+                    <span class="campo__error" id="errorEmail"></span>
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="password">Contraseña</label>
+                    <div class="campo__grupo">
+                        <input
+                            class="campo__control"
+                            type="password"
+                            id="password"
+                            name="password"
+                            autocomplete="current-password"
+                            required>
+                        <button
+                            class="campo__ver"
+                            type="button"
+                            id="verPassword"
+                            aria-controls="password">Mostrar</button>
+                    </div>
+                    <span class="campo__error" id="errorPassword"></span>
+                </div>
+
+                <button
+                    class="ep-boton ep-boton--primario acceso__boton"
+                    type="submit"
+                    id="boton">Ingresar</button>
+
+            </form>
+
+            <p class="acceso__pie">
+                <a href="/">Volver a la tienda</a>
+            </p>
+
+        </div>
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script src="login.js"></script>
+
+</body>
+</html>

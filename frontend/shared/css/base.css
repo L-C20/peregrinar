@@ -5,6 +5,11 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* El [hidden] del navegador se pierde en cuanto una regla nuestra
+   define display. Como escondemos y mostramos con el atributo
+   (nodo.hidden = true), esta regla tiene que ganar siempre. */
+[hidden] { display: none !important; }
+
 html { -webkit-text-size-adjust: 100%; }
 
 body {

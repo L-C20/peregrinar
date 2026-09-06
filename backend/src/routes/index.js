@@ -1,7 +1,11 @@
 // =====================================================
 // MONTAJE DE RUTAS
 //
-// Tres superficies con reglas de tenant distintas:
+// Cuatro superficies con reglas de tenant distintas:
+//
+//   /api/auth/*      login: todavia sin token. El tenant sale
+//                    del dominio, porque el mismo email puede
+//                    existir en dos tiendas.
 //
 //   /api/public/*    tienda: sin token. El tenant lo determina
 //                    tenantResolver (dominio -> tenant_dominios,
@@ -22,6 +26,7 @@ const express = require("express");
 const { exito } = require("../utils/respuesta");
 const { probarConexion } = require("../database/connection");
 
+const rutasAuth = require("./auth");
 const rutasPublicas = require("./public");
 const rutasAdmin = require("./admin");
 const rutasPlataforma = require("./platform");
@@ -48,6 +53,7 @@ router.get("/health", async (req, res) => {
 });
 
 
+router.use("/auth", rutasAuth);
 router.use("/public", rutasPublicas);
 router.use("/admin", rutasAdmin);
 router.use("/platform", rutasPlataforma);

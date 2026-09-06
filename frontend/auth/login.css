@@ -1,0 +1,162 @@
+/* =====================================================
+   INGRESO AL PANEL
+   Usa las variables de shared/css/tokens.css.
+   ===================================================== */
+
+.acceso {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: var(--espacio-4);
+    background:
+        radial-gradient(circle at 15% 0%,
+            color-mix(in srgb, var(--color-principal) 10%, transparent), transparent 55%),
+        radial-gradient(circle at 100% 100%,
+            color-mix(in srgb, var(--color-secundario) 12%, transparent), transparent 50%),
+        var(--color-fondo);
+}
+
+.acceso__caja {
+    width: min(420px, 100%);
+    padding: var(--espacio-6);
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04),
+                0 12px 40px rgba(15, 23, 42, .08);
+}
+
+.acceso__marca {
+    text-align: center;
+    margin-bottom: var(--espacio-6);
+}
+
+.acceso__tienda {
+    font-family: var(--fuente-titulos);
+    font-size: 1.4rem;
+    font-weight: var(--peso-titulos);
+    color: var(--color-principal);
+    margin: 0 0 var(--espacio-1);
+    min-height: 1.4em;
+}
+
+.acceso__subtitulo {
+    margin: 0;
+    font-size: .9rem;
+    color: var(--color-texto-suave);
+}
+
+
+/* ---------- CAMPOS ---------- */
+
+.campo {
+    margin-bottom: var(--espacio-4);
+}
+
+.campo__etiqueta {
+    display: block;
+    margin-bottom: var(--espacio-2);
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.campo__control {
+    width: 100%;
+    padding: 11px 14px;
+    font: inherit;
+    color: var(--color-texto);
+    background: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-boton);
+    transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.campo__control:focus {
+    outline: none;
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-principal) 18%, transparent);
+}
+
+.campo__control[aria-invalid="true"] {
+    border-color: var(--color-error);
+}
+
+.campo__error {
+    display: block;
+    min-height: 1.2em;
+    margin-top: var(--espacio-1);
+    font-size: .8rem;
+    color: var(--color-error);
+}
+
+
+/* ---------- CONTRASEÑA ---------- */
+
+.campo__grupo {
+    position: relative;
+    display: flex;
+}
+
+.campo__grupo .campo__control {
+    padding-right: 76px;
+}
+
+.campo__ver {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 6px 10px;
+    font: inherit;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+    background: none;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.campo__ver:hover { color: var(--color-principal); }
+
+
+/* ---------- ACCIONES ---------- */
+
+.acceso__boton {
+    width: 100%;
+    padding: 12px;
+    margin-top: var(--espacio-2);
+}
+
+.acceso__aviso {
+    display: flex;
+    gap: var(--espacio-2);
+    padding: var(--espacio-3) var(--espacio-4);
+    margin-bottom: var(--espacio-4);
+    font-size: .875rem;
+    color: var(--color-error);
+    background: color-mix(in srgb, var(--color-error) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-error) 25%, transparent);
+    border-radius: 10px;
+}
+
+.acceso__pie {
+    margin: var(--espacio-5) 0 0;
+    text-align: center;
+    font-size: .8rem;
+    color: var(--color-texto-suave);
+}
+
+.acceso__pie a { color: var(--color-texto-suave); }
+
+
+@media (max-width: 420px) {
+    .acceso__caja {
+        padding: var(--espacio-5) var(--espacio-4);
+        border: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+}

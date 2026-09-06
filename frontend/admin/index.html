@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Panel</title>
+
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+
+    <style>
+        /* Provisorio: el layout real del panel (sidebar, header,
+           navegación) se construye en la Etapa 7. */
+        .panel { max-width: 720px; margin: 0 auto; padding: var(--espacio-7) var(--espacio-4); }
+        .panel__datos { display: grid; gap: var(--espacio-2); margin: 0 0 var(--espacio-5); }
+        .panel__dato { display: flex; gap: var(--espacio-3); font-size: .95rem; }
+        .panel__dato dt { min-width: 96px; color: var(--color-texto-suave); margin: 0; }
+        .panel__dato dd { margin: 0; font-weight: 600; }
+        .panel__acciones { display: flex; gap: var(--espacio-2); flex-wrap: wrap; }
+        .panel__nota { color: var(--color-texto-suave); font-size: .875rem; }
+        .campo { margin-bottom: var(--espacio-4); }
+        .campo label { display: block; margin-bottom: var(--espacio-2);
+                       font-size: .875rem; font-weight: 600; }
+        .campo input { width: 100%; padding: 10px 13px; font: inherit;
+                       border: 1px solid var(--color-borde);
+                       border-radius: var(--radio-boton); }
+    </style>
+</head>
+<body>
+
+    <main class="panel">
+
+        <h1 id="titulo">Panel</h1>
+
+        <div class="ep-tarjeta">
+            <h3>Sesión activa</h3>
+            <dl class="panel__datos" id="datos"></dl>
+            <div class="panel__acciones">
+                <button class="ep-boton ep-boton--secundario" id="botonPassword">
+                    Cambiar contraseña
+                </button>
+                <button class="ep-boton ep-boton--secundario" id="botonSalir">
+                    Cerrar sesión
+                </button>
+            </div>
+        </div>
+
+        <div class="ep-tarjeta" id="cajaPassword" hidden style="margin-top:var(--espacio-4)">
+            <h3>Cambiar contraseña</h3>
+            <form id="formPassword">
+                <div class="campo">
+                    <label for="actual">Contraseña actual</label>
+                    <input type="password" id="actual" autocomplete="current-password" required>
+                </div>
+                <div class="campo">
+                    <label for="nueva">Contraseña nueva</label>
+                    <input type="password" id="nueva" autocomplete="new-password"
+                           minlength="8" required>
+                </div>
+                <button class="ep-boton ep-boton--primario" type="submit" id="botonGuardar">
+                    Guardar
+                </button>
+            </form>
+        </div>
+
+        <p class="panel__nota" style="margin-top:var(--espacio-5)">
+            Pantalla provisoria de la Etapa 5. El panel completo —dashboard,
+            productos, categorías, apariencia— se construye a partir de la Etapa 7.
+        </p>
+
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script src="admin.js"></script>
+
+</body>
+</html>

@@ -32,6 +32,8 @@ Abrir http://localhost:3000
 | `npm run migrate -- --estado` | Muestra qué migraciones están aplicadas, sin tocar nada |
 | `npm run seed` | Carga el tenant inicial y un catálogo de ejemplo |
 | `npm run verificar` | Comprueba que la base impide cruzar datos entre tiendas |
+| `npm run crear-tenant -- --ayuda` | Crea una tienda nueva con su primer administrador |
+| `npm run crear-usuario -- --ayuda` | Crea un administrador, un empleado o un superadmin |
 
 ---
 
@@ -176,6 +178,48 @@ el driver. En la base se guarda `clave`, nunca la URL.
 
 ---
 
+## Ingreso y roles
+
+El login resuelve **primero la tienda** por el dominio y **después** busca al
+usuario dentro de ella. Por eso dos tiendas pueden tener un administrador con el
+mismo email y contraseñas distintas, sin pisarse. El superadmin es la excepción:
+no pertenece a ninguna tienda y se busca aparte.
+
+| Rol | Alcance | Entra a |
+|---|---|---|
+| `superadmin` | toda la plataforma | `/api/platform/*` |
+| `admin` | su tienda, sin límites | `/api/admin/*` |
+| `empleado` | su tienda, según `usuarios.permisos` | `/api/admin/*` |
+
+```js
+router.post("/",     autenticar, requireRol("admin"),            ctrl.crear)
+router.put("/:id",   autenticar, requirePermiso("productos.editar"), ctrl.editar)
+```
+
+Los permisos de un empleado se guardan como JSONB
+(`{ "productos": ["ver","crear"] }`). `admin` y `superadmin` no se consultan
+contra ese objeto. La estructura existe desde ahora para que sumar permisos
+finos más adelante no requiera migrar la base.
+
+**Qué protege el login**
+
+- La respuesta de un intento fallido es siempre la misma, exista el email o no,
+  y se compara contra un hash señuelo para que además tarde lo mismo. Decir cuál
+  de las dos cosas falló le regala al atacante la mitad del trabajo.
+- Ocho intentos fallidos por IP y email bloquean 15 minutos (`429` con
+  `Retry-After`). El bloqueo es por email, así que nadie puede dejar afuera al
+  dueño de una cuenta ajena fallando a propósito.
+- Cada petición comprueba contra la base que el usuario siga existiendo,
+  habilitado y con el mismo rol. Sin eso, dar de baja a un empleado no tendría
+  efecto hasta que venciera su token, ocho horas después. La comprobación se
+  cachea un minuto, y el panel la invalida al instante cuando cambia algo.
+
+**Contraseñas.** Nunca hay una escrita en el código. Los scripts y el seed la
+toman de una variable de entorno o generan una al azar y la muestran una sola
+vez.
+
+---
+
 ## Variables de entorno
 
 Ver `backend/.env.example`. `backend/.env` no se versiona.
@@ -188,7 +232,7 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 | 2 | Arquitectura y contratos transversales | ✅ |
 | 3 | Base de datos y migraciones | ✅ |
 | 4 | Núcleo del backend (tenant, storage) | ✅ |
-| 5 | Autenticación y roles | pendiente |
+| 5 | Autenticación y roles | ✅ |
 | 6 | API pública + productos y categorías | pendiente |
 | 7 | Panel administrativo | pendiente |
 | 8 | Tienda pública | pendiente |

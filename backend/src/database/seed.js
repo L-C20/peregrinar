@@ -18,11 +18,10 @@
 // definida se genera una al azar y se muestra una sola vez.
 // =====================================================
 
-const crypto = require("crypto");
-const bcrypt = require("bcrypt");
-
 const config = require("../config/env");
 const { pool, transaccion } = require("./connection");
+const { crearTenant } = require("../services/tenants");
+const { crearUsuario } = require("../services/usuarios");
 
 
 const SLUG_TENANT = "editorial-peregrinar";
@@ -47,18 +46,6 @@ const TENANT = {
     slug: SLUG_TENANT,
     plan: "basico"
 };
-
-
-// Modulos: lo que la tienda tiene habilitado hoy.
-const MODULOS = [
-    ["catalogo", true],
-    ["carrito", true],
-    ["pedidos", true],
-    ["galeria", true],
-    ["promociones", false],
-    ["insumos", false],
-    ["blog", false]
-];
 
 
 // Paleta cálida y sobria, pensada para una librería cristiana.
@@ -99,23 +86,6 @@ const SITIO = {
     moneda: "ARS",
     simbolo_moneda: "$"
 };
-
-
-const MEDIOS_PAGO = [
-    {
-        tipo: "efectivo",
-        nombre: "Efectivo",
-        instrucciones: "Se abona al retirar el pedido.",
-        orden: 0
-    },
-    {
-        tipo: "transferencia",
-        nombre: "Transferencia bancaria",
-        instrucciones:
-            "Te enviamos los datos de la cuenta al confirmar el pedido.",
-        orden: 1
-    }
-];
 
 
 const CATEGORIAS = [
@@ -216,33 +186,6 @@ const GALERIAS = [
 
 
 // -----------------------------------------------------
-// CONTRASEÑA DEL ADMINISTRADOR
-// -----------------------------------------------------
-
-function obtenerCredenciales() {
-
-    const email =
-        process.env.SEED_ADMIN_EMAIL || "admin@editorialperegrinar.com";
-
-    const password = process.env.SEED_ADMIN_PASSWORD;
-
-    if (password) {
-        return { email, password, generada: false };
-    }
-
-    // 18 caracteres seguros, sin ambigüedades visuales.
-    const alfabeto = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
-
-    const generada = Array.from(
-        crypto.randomBytes(18),
-        byte => alfabeto[byte % alfabeto.length]
-    ).join("");
-
-    return { email, password: generada, generada: true };
-}
-
-
-// -----------------------------------------------------
 // PROCESO
 // -----------------------------------------------------
 
@@ -275,122 +218,53 @@ async function sembrar() {
     }
 
 
-    const credenciales = obtenerCredenciales();
-
-    const passwordHash = await bcrypt.hash(
-        credenciales.password,
-        config.seguridad.bcryptRounds
-    );
-
+    let credenciales;
 
     await transaccion(async (cliente) => {
 
         // ---------------------------------------------
-        // TENANT
+        // TIENDA
+        //
+        // La crea el mismo servicio que usa crear-tenant:
+        // dominios, modulos, las tres tablas de configuracion
+        // y los medios de pago. Asi la tienda numero 12 nace
+        // exactamente igual que esta.
         // ---------------------------------------------
 
-        const tenant = (await cliente.query(
-            `INSERT INTO tenants (nombre, slug, plan)
-             VALUES ($1, $2, $3)
-             RETURNING id`,
-            [TENANT.nombre, TENANT.slug, TENANT.plan]
-        )).rows[0];
+        const tenant = await crearTenant(cliente, {
+            nombre: TENANT.nombre,
+            slug: TENANT.slug,
+            plan: TENANT.plan,
+            // En desarrollo la tienda se sirve desde localhost.
+            // El dominio real se agrega cuando exista.
+            dominios: ["localhost"],
+            apariencia: APARIENCIA,
+            sitio: SITIO
+        });
 
         const tenantId = tenant.id;
 
-        ok(`Tenant "${TENANT.nombre}" creado`);
-
-
-        // ---------------------------------------------
-        // DOMINIO
-        // En desarrollo la tienda se sirve desde localhost.
-        // El dominio real se agrega desde el panel de
-        // plataforma cuando exista.
-        // ---------------------------------------------
-
-        await cliente.query(
-            `INSERT INTO tenant_dominios (tenant_id, dominio, principal)
-             VALUES ($1, $2, true)`,
-            [tenantId, "localhost"]
-        );
-
-        ok("Dominio localhost asociado");
-
-
-        // ---------------------------------------------
-        // MODULOS
-        // ---------------------------------------------
-
-        for (const [modulo, activo] of MODULOS) {
-            await cliente.query(
-                `INSERT INTO tenant_modulos (tenant_id, modulo, activo)
-                 VALUES ($1, $2, $3)`,
-                [tenantId, modulo, activo]
-            );
-        }
-
-        ok(`${MODULOS.filter(m => m[1]).length} módulos activos`);
+        ok(`Tienda "${TENANT.nombre}" creada con su configuración`);
 
 
         // ---------------------------------------------
         // ADMINISTRADOR
+        //
+        // La contraseña sale de SEED_ADMIN_PASSWORD; si no
+        // esta definida se genera al azar y se muestra una
+        // sola vez al final.
         // ---------------------------------------------
 
-        await cliente.query(
-            `INSERT INTO usuarios (tenant_id, nombre, email, password_hash, rol)
-             VALUES ($1, $2, $3, $4, 'admin')`,
-            [tenantId, "Administrador", credenciales.email, passwordHash]
-        );
+        credenciales = await crearUsuario({
+            cliente,
+            tenantId,
+            nombre: "Administrador",
+            email: process.env.SEED_ADMIN_EMAIL || "admin@editorialperegrinar.com",
+            rol: "admin",
+            password: process.env.SEED_ADMIN_PASSWORD || null
+        });
 
-        ok(`Administrador ${credenciales.email} creado`);
-
-
-        // ---------------------------------------------
-        // CONFIGURACION
-        // ---------------------------------------------
-
-        const camposApariencia = Object.keys(APARIENCIA);
-
-        await cliente.query(
-            `INSERT INTO configuracion_apariencia
-                 (tenant_id, ${camposApariencia.join(", ")})
-             VALUES
-                 ($1, ${camposApariencia.map((_, i) => `$${i + 2}`).join(", ")})`,
-            [tenantId, ...camposApariencia.map(campo => APARIENCIA[campo])]
-        );
-
-        const camposSitio = Object.keys(SITIO);
-
-        await cliente.query(
-            `INSERT INTO configuracion_sitio
-                 (tenant_id, ${camposSitio.join(", ")})
-             VALUES
-                 ($1, ${camposSitio.map((_, i) => `$${i + 2}`).join(", ")})`,
-            [tenantId, ...camposSitio.map(campo => SITIO[campo])]
-        );
-
-        // Los datos de contacto los completa el cliente desde el panel.
-        await cliente.query(
-            "INSERT INTO configuracion_contacto (tenant_id) VALUES ($1)",
-            [tenantId]
-        );
-
-        ok("Configuración de apariencia, sitio y contacto creada");
-
-
-        // ---------------------------------------------
-        // MEDIOS DE PAGO
-        // ---------------------------------------------
-
-        for (const medio of MEDIOS_PAGO) {
-            await cliente.query(
-                `INSERT INTO medios_pago (tenant_id, tipo, nombre, instrucciones, orden)
-                 VALUES ($1, $2, $3, $4, $5)`,
-                [tenantId, medio.tipo, medio.nombre, medio.instrucciones, medio.orden]
-            );
-        }
-
-        ok(`${MEDIOS_PAGO.length} medios de pago configurados`);
+        ok(`Administrador ${credenciales.usuario.email} creado`);
 
 
         // ---------------------------------------------
@@ -494,7 +368,7 @@ async function sembrar() {
     linea("  ─────────────────────────────────────────────");
     linea("   ACCESO AL PANEL");
     linea("  ─────────────────────────────────────────────");
-    linea(`   Email:      ${credenciales.email}`);
+    linea(`   Email:      ${credenciales.usuario.email}`);
     linea(`   Contraseña: ${credenciales.password}`);
     linea("  ─────────────────────────────────────────────");
 
