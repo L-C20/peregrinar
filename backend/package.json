@@ -10,7 +10,8 @@
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "crear-tenant": "node scripts/crear-tenant.js",
-    "crear-usuario": "node scripts/crear-usuario.js"
+    "crear-usuario": "node scripts/crear-usuario.js",
+    "verificar": "node scripts/verificar-aislamiento.js"
   },
   "license": "ISC",
   "dependencies": {

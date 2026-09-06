@@ -33,6 +33,15 @@ function traducirErrorPostgres(error) {
         case "23503": // foreign_key_violation
             return { estado: 400, mensaje: "El registro está relacionado con otros datos" };
 
+        case "23001": // restrict_violation
+            return {
+                estado: 409,
+                mensaje: "No se puede eliminar: hay otros registros que dependen de este"
+            };
+
+        case "23514": // check_violation
+            return { estado: 400, mensaje: "Alguno de los datos enviados no es válido" };
+
         case "23502": // not_null_violation
             return { estado: 400, mensaje: `El campo "${error.column}" es obligatorio` };
 

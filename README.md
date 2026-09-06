@@ -2,8 +2,9 @@
 
 Plataforma e-commerce multi-tenant. Primer tenant: **Editorial Peregrinar**.
 
-Node.js + Express + PostgreSQL en el backend. HTML, CSS y JavaScript vanilla en
-el frontend, servido por el mismo Express. Sin frameworks de frontend, sin build.
+Node.js + Express + PostgreSQL 15 o superior en el backend. HTML, CSS y
+JavaScript vanilla en el frontend, servido por el mismo Express. Sin frameworks
+de frontend, sin build.
 
 ---
 
@@ -13,11 +14,24 @@ el frontend, servido por el mismo Express. Sin frameworks de frontend, sin build
 cd backend
 npm install
 cp .env.example .env      # completar DATABASE_URL y JWT_SECRET
-npm run migrate           # a partir de la Etapa 3
+npm run migrate           # crea la base y aplica el esquema
+npm run seed              # carga Editorial Peregrinar (una sola vez)
 npm run dev
 ```
 
 Abrir http://localhost:3000
+
+`npm run seed` imprime el email y la contraseña del administrador una única vez.
+
+### Comandos
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor con recarga automática |
+| `npm run migrate` | Crea la base si falta y aplica las migraciones pendientes |
+| `npm run migrate -- --estado` | Muestra qué migraciones están aplicadas, sin tocar nada |
+| `npm run seed` | Carga el tenant inicial y un catálogo de ejemplo |
+| `npm run verificar` | Comprueba que la base impide cruzar datos entre tiendas |
 
 ---
 
@@ -73,8 +87,10 @@ Ninguna ruta llama a `res.json()` directamente.
 manejador central, que arma la respuesta. Sin `try/catch` repetido en cada ruta.
 
 **6. En la base se guarda la clave del archivo, no la URL.**
-`productos/editorial-peregrinar/abc.jpg`. La URL la arma `storage/`. Así cambiar
-a Cloudinary es un archivo y no una migración de datos.
+Las columnas se llaman `imagen`, `logo`, `favicon`, `og_imagen` — nunca
+`*_url` — y guardan algo como `productos/editorial-peregrinar/abc.jpg`.
+La URL la arma `storage/`. Así cambiar a Cloudinary es un archivo y no una
+migración de datos.
 
 **7. El frontend nunca usa `fetch()` ni URLs absolutas.**
 Todo pasa por `EP.api` (`shared/js/api.js`).
@@ -87,7 +103,33 @@ Se usan las variables de `shared/css/tokens.css`, que es el contrato con el
 editor de apariencia.
 
 **10. Los cambios de esquema van en una migración numerada.**
-Nunca SQL ejecutado a mano.
+Nunca SQL ejecutado a mano, y nunca editando una migración ya aplicada: el
+runner guarda el checksum de cada archivo y se detiene si alguno cambió.
+
+---
+
+## Cómo la base impide que se crucen los datos
+
+El aislamiento no depende de acordarse de escribir `WHERE tenant_id = ...`.
+Está en el esquema:
+
+- Las 21 tablas de negocio tienen `tenant_id NOT NULL` con
+  `ON DELETE CASCADE` hacia `tenants`. Eliminar una tienda borra todo lo suyo.
+- Cada tabla que es destino de una relación declara `UNIQUE (tenant_id, id)`, y
+  las relaciones internas usan claves foráneas **compuestas**:
+
+  ```sql
+  FOREIGN KEY (tenant_id, categoria_id) REFERENCES categorias (tenant_id, id)
+  ```
+
+  Un producto de la Tienda A no puede apuntar a una categoría de la Tienda B:
+  PostgreSQL rechaza el `INSERT`. Lo mismo con imágenes, pedidos, items de
+  pedido y galerías.
+- Toda unicidad es compuesta con `tenant_id`, así que cada tienda tiene su
+  propio espacio de nombres: sus slugs, sus emails de administrador y su
+  numeración de pedidos, que arranca en 1 para cada una.
+
+`npm run verificar` comprueba las 21 reglas y no deja nada en la base.
 
 ---
 
@@ -101,7 +143,7 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 |---|---|---|
 | 1 | Análisis | ✅ |
 | 2 | Arquitectura y contratos transversales | ✅ |
-| 3 | Base de datos y migraciones | pendiente |
+| 3 | Base de datos y migraciones | ✅ |
 | 4 | Núcleo del backend (tenant, storage) | pendiente |
 | 5 | Autenticación y roles | pendiente |
 | 6 | API pública + productos y categorías | pendiente |
