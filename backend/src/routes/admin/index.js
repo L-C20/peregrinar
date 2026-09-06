@@ -18,6 +18,7 @@ const { soloTienda, requirePermiso } = require("../../middleware/roles");
 const { moduloActivo } = require("../../middleware/modulo");
 const { subirImagen, subirImagenes } = require("../../middleware/upload");
 
+const resumen = require("../../controllers/admin/resumen");
 const categorias = require("../../controllers/admin/categorias");
 const productos = require("../../controllers/admin/productos");
 const { MAX_IMAGENES } = require("../../repositories/productos");
@@ -28,6 +29,15 @@ const router = express.Router();
 
 router.use(autenticar);
 router.use(soloTienda);
+
+
+// =====================================================
+// INICIO
+// Sin permiso extra: cualquiera que entre al panel ve los
+// numeros de su tienda.
+// =====================================================
+
+router.get("/resumen", resumen.resumen);
 
 
 // El catálogo entero depende de que la tienda tenga el módulo.

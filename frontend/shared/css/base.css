@@ -10,6 +10,20 @@
    (nodo.hidden = true), esta regla tiene que ganar siempre. */
 [hidden] { display: none !important; }
 
+/* Para etiquetas que tienen que existir para quien usa lector de
+   pantalla, pero que en pantalla sobran porque ya está el
+   placeholder o el icono al lado. */
+.ep-visualmente-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 html { -webkit-text-size-adjust: 100%; }
 
 body {

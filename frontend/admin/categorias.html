@@ -4,29 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>Inicio · Panel</title>
+    <title>Categorías · Panel</title>
 
     <link rel="stylesheet" href="/shared/css/tokens.css">
     <link rel="stylesheet" href="/shared/css/base.css">
     <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body" data-seccion="inicio" data-titulo="Inicio">
+<body class="admin-body" data-seccion="categorias" data-titulo="Categorías">
 
     <main class="contenido" data-contenido>
 
         <div class="pagina">
             <div class="pagina__texto">
-                <h2 class="pagina__titulo" id="saludo">Hola</h2>
-                <p class="pagina__ayuda">Un resumen de cómo está tu tienda hoy.</p>
+                <h2 class="pagina__titulo">Categorías</h2>
+                <p class="pagina__ayuda">
+                    Sirven para agrupar los productos en el menú de tu tienda.
+                    El orden de esta lista es el que ve tu cliente.
+                </p>
             </div>
             <div class="pagina__acciones">
-                <a class="boton boton--suave" href="categorias.html">Categorías</a>
-                <a class="boton boton--primario" href="productos.html">Productos</a>
+                <button class="boton boton--primario" type="button" id="botonNueva">
+                    Nueva categoría
+                </button>
             </div>
         </div>
 
-        <div id="panel">
-            <div class="cargando"><span class="giro"></span></div>
+        <div class="tabla-marco">
+            <div id="lista">
+                <div class="cargando"><span class="giro"></span></div>
+            </div>
         </div>
 
     </main>
@@ -37,7 +43,7 @@
     <script src="js/comunes.js"></script>
     <script src="js/cajon.js"></script>
     <script src="js/layout.js"></script>
-    <script src="js/dashboard.js"></script>
+    <script src="js/categorias.js"></script>
 
 </body>
 </html>

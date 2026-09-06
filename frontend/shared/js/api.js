@@ -95,7 +95,22 @@ window.EP = window.EP || {};
         }
 
 
-        return cuerpoRespuesta.data;
+        const datos = cuerpoRespuesta.data;
+
+
+        // Los listados traen la paginación en "meta", al lado de
+        // "data". Se engancha al resultado para no tener que pedir
+        // lo mismo dos veces. Va como propiedad no enumerable, así
+        // que no aparece al recorrer el array ni al serializarlo.
+        if (cuerpoRespuesta.meta && datos && typeof datos === "object") {
+            Object.defineProperty(datos, "meta", {
+                value: cuerpoRespuesta.meta,
+                enumerable: false
+            });
+        }
+
+
+        return datos;
     }
 
 

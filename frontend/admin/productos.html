@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Productos · Panel</title>
+
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body" data-seccion="productos" data-titulo="Productos">
+
+    <main class="contenido" data-contenido>
+
+        <div class="pagina">
+            <div class="pagina__texto">
+                <h2 class="pagina__titulo">Productos</h2>
+                <p class="pagina__ayuda">
+                    Lo que se muestra en tu tienda. Los que están ocultos siguen
+                    acá, pero nadie los ve.
+                </p>
+            </div>
+            <div class="pagina__acciones">
+                <button class="boton boton--primario" type="button" id="botonNuevo">
+                    Nuevo producto
+                </button>
+            </div>
+        </div>
+
+        <div class="filtros">
+            <div class="buscador">
+                <span class="buscador__icono" id="iconoBuscar"></span>
+                <label class="ep-visualmente-oculto" for="buscar">Buscar producto</label>
+                <input class="control" type="search" id="buscar"
+                       placeholder="Buscar por nombre, descripción o código…">
+            </div>
+
+            <label class="ep-visualmente-oculto" for="filtroCategoria">Categoría</label>
+            <select class="control filtros__select" id="filtroCategoria">
+                <option value="">Todas las categorías</option>
+            </select>
+
+            <label class="ep-visualmente-oculto" for="filtroEstado">Estado</label>
+            <select class="control filtros__select" id="filtroEstado">
+                <option value="">Todos</option>
+                <option value="true">A la venta</option>
+                <option value="false">Ocultos</option>
+            </select>
+
+            <span class="filtros__resultado" id="resultado"></span>
+        </div>
+
+        <div class="tabla-marco">
+            <div id="lista">
+                <div class="cargando"><span class="giro"></span></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script src="js/comunes.js"></script>
+    <script src="js/cajon.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/productos.js"></script>
+
+</body>
+</html>
