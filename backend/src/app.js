@@ -115,6 +115,7 @@ app.get("/producto/:slug", pagina("producto.html"));
 app.get("/p/:clave", pagina("pagina.html"));
 app.get("/preguntas-frecuentes", pagina("faq.html"));
 app.get("/contacto", pagina("contacto.html"));
+app.get("/carrito", pagina("carrito.html"));
 
 
 // -----------------------------------------------------

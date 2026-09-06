@@ -42,8 +42,9 @@ window.EP = window.EP || {};
             titulo: "Ventas",
             enlaces: [
                 { id: "pedidos", texto: "Pedidos", icono: "pedidos",
-                  modulo: "pedidos", pronto: true },
-                { id: "clientes", texto: "Clientes", icono: "clientes", pronto: true }
+                  url: "/admin/pedidos.html", modulo: "pedidos" },
+                { id: "clientes", texto: "Clientes", icono: "clientes",
+                  url: "/admin/clientes.html" }
             ]
         },
         {

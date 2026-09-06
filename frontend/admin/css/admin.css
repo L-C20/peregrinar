@@ -995,3 +995,129 @@ select.control {
 
     .metrica__valor { font-size: 1.5rem; }
 }
+
+
+/* =====================================================
+   PESTAÑAS DE ESTADO
+   ===================================================== */
+
+.pestanas {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--ad-borde);
+    scrollbar-width: thin;
+}
+
+.pestana {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    font: inherit;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--ad-texto-suave);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 150ms, border-color 150ms;
+}
+
+.pestana:hover { color: var(--ad-texto); }
+
+.pestana--activa {
+    color: var(--ad-acento);
+    border-bottom-color: var(--ad-acento);
+}
+
+.pestana__cuenta {
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--ad-fondo);
+    font-size: .72rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.pestana--activa .pestana__cuenta {
+    background: var(--ad-acento-suave);
+    color: var(--ad-acento-oscuro);
+}
+
+
+/* =====================================================
+   FICHA DE DATOS
+   ===================================================== */
+
+.ficha-linea {
+    display: flex;
+    gap: 14px;
+    padding: 7px 0;
+    font-size: .9rem;
+    border-bottom: 1px solid var(--ad-borde);
+}
+
+.ficha-linea:last-child { border-bottom: 0; }
+
+.ficha-linea__clave {
+    min-width: 118px;
+    flex: 0 0 118px;
+    color: var(--ad-texto-suave);
+}
+
+
+/* =====================================================
+   HISTORIAL DEL PEDIDO
+   ===================================================== */
+
+.historial {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* La línea que une los pasos. */
+.historial::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: var(--ad-borde);
+}
+
+.historial__paso {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 8px 0 8px 26px;
+    font-size: .875rem;
+}
+
+.historial__paso::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 14px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ad-borde-fuerte);
+    border: 2px solid var(--ad-superficie);
+}
+
+.historial__paso:last-child::before { background: var(--ad-acento); }
+
+@media (max-width: 560px) {
+    .ficha-linea { flex-direction: column; gap: 2px; }
+    .ficha-linea__clave { flex: none; }
+}

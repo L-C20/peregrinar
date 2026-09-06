@@ -236,6 +236,32 @@ window.EP = window.EP || {};
     }
 
 
+    // El número sobre el carrito se actualiza solo: EP.carrito
+    // avisa cada vez que cambia, también desde otra pestaña.
+    function construirBotonCarrito() {
+
+        const cuenta = crear("span", { clase: "carrito-cuenta", hidden: true });
+
+        const boton = crear("a", {
+            clase: "icono-boton icono-boton--carrito",
+            href: "/carrito",
+            "aria-label": "Ver el carrito"
+        }, [icono("carrito"), cuenta]);
+
+        EP.carrito?.alCambiar(() => {
+            const cantidad = EP.carrito.cantidad();
+            cuenta.textContent = cantidad > 99 ? "99+" : String(cantidad);
+            cuenta.hidden = cantidad === 0;
+            boton.setAttribute("aria-label",
+                cantidad === 0
+                    ? "Ver el carrito, está vacío"
+                    : `Ver el carrito, ${cantidad} ${cantidad === 1 ? "producto" : "productos"}`);
+        });
+
+        return boton;
+    }
+
+
     function construirCabecera(config, seccion) {
 
         const nombre = config.tienda.nombre;
@@ -300,6 +326,8 @@ window.EP = window.EP || {};
                             href: "/catalogo",
                             "aria-label": "Buscar productos"
                         }, [icono("buscar")]),
+
+                        config.modulos.carrito && construirBotonCarrito(),
 
                         crear("button", {
                             clase: "icono-boton abrir-menu",
@@ -485,6 +513,10 @@ window.EP = window.EP || {};
 
         aplicarApariencia(configuracion.apariencia);
         aplicarSeo(configuracion);
+
+        // El carrito se separa por tienda: dos tiendas distintas en
+        // el mismo navegador no se mezclan.
+        EP.carrito?.preparar(configuracion.tienda.slug);
 
         const { cabecera, franja } = construirCabecera(configuracion, seccion);
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Pedidos · Panel</title>
+
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body" data-seccion="pedidos" data-titulo="Pedidos">
+
+    <main class="contenido" data-contenido>
+
+        <div class="pagina">
+            <div class="pagina__texto">
+                <h2 class="pagina__titulo">Pedidos</h2>
+                <p class="pagina__ayuda">Los pedidos entran solos desde tu tienda. Acá los seguís y les cambiás el estado.</p>
+            </div>
+        </div>
+
+        <div id="pestanas" class="pestanas"></div>
+
+        <div class="filtros">
+            <div class="buscador">
+                <span class="buscador__icono" id="iconoBuscar"></span>
+                <label class="ep-visualmente-oculto" for="buscar">Buscar pedido</label>
+                <input class="control" type="search" id="buscar"
+                       placeholder="Buscar por número, nombre o email…">
+            </div>
+            <span class="filtros__resultado" id="resultado"></span>
+        </div>
+
+
+        <div class="tabla-marco">
+            <div id="lista">
+                <div class="cargando"><span class="giro"></span></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script src="js/comunes.js"></script>
+    <script src="js/cajon.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/pedidos.js"></script>
+
+</body>
+</html>

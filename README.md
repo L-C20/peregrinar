@@ -202,6 +202,37 @@ desde el panel, aparece sola en el menú y en el pie.
 
 ---
 
+## Carrito y pedidos
+
+**El precio lo pone el servidor, nunca el carrito.** El navegador manda qué
+producto y cuántas unidades; el precio, el nombre y el total los calcula
+`services/pedidos.js` leyendo la tabla de productos. Si se confiara en lo que
+llega, cualquiera compraría una biblia a un peso editando un número antes de
+enviar.
+
+El carrito vive en el `localStorage` de quien compra, separado por tienda. Al
+confirmar se valida de nuevo contra la base: que el producto siga publicado y
+que haya stock. Si algo cambió mientras el carrito estaba abierto, la respuesta
+dice qué producto y por qué, y la tienda lo marca en rojo.
+
+El número de pedido es correlativo **por tienda** —cada una arranca en 1— y se
+asigna bajo un candado de PostgreSQL, para que dos compras simultáneas no
+calculen el mismo número.
+
+El pedido guarda una **foto del momento**: nombre y precio quedan copiados en
+`pedido_items`. Si después cambia el precio o se elimina el producto, el pedido
+viejo sigue diciendo qué se vendió y a cuánto.
+
+El límite por IP cuenta **pedidos creados**, no intentos: contar los intentos
+dejaría afuera a quien se equivoca al escribir su email unas cuantas veces.
+
+**Sobre el stock:** se valida al momento del pedido pero no se descuenta solo.
+Con pago en efectivo o transferencia y confirmación manual, descontar al crear
+el pedido dejaría stock trabado por compras que nunca se concretan. El stock lo
+ajusta el cliente desde el panel al preparar el pedido.
+
+---
+
 ## Ingreso y roles
 
 El login resuelve **primero la tienda** por el dominio y **después** busca al
@@ -264,6 +295,7 @@ exacto ni las fechas internas.
 | `GET /faq` | Preguntas frecuentes |
 | `GET /paginas/:clave` | Nosotros, trabajos personalizados, lo que el cliente cree |
 | `GET /banners` | Banners de la portada |
+| `POST /pedidos` | Crear un pedido (único punto público que escribe) |
 
 `GET /tienda` devuelve todo lo que cualquier página necesita al cargar
 —identidad, apariencia, contacto, redes, medios de pago, módulos y qué páginas
@@ -321,6 +353,6 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 | 7 | Panel administrativo | pendiente |
 | 8 | Tienda pública | ✅ |
 | 9 | Editor de apariencia | pendiente |
-| 10 | Clientes, pedidos y carrito | pendiente |
+| 10 | Clientes, pedidos y carrito | ✅ |
 | 11 | Contenido: banners, galerías, contacto, pagos, módulos | pendiente |
 | 12 | Producción | pendiente |

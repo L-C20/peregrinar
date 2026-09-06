@@ -41,43 +41,98 @@ window.EP = window.EP || {};
         }
 
 
-        return crear("a", {
-            clase: "producto",
-            href: `/producto/${producto.slug}`
-        }, [
+        // La tarjeta es un <article> y no un <a>: adentro va el
+        // enlace al producto y, aparte, el botón de agregar. Un
+        // botón dentro de un enlace no es HTML válido y en el
+        // teclado se comporta mal.
+        return crear("article", { clase: "producto" }, [
 
-            crear("div", { clase: "producto__marco" }, [
+            crear("a", {
+                clase: "producto__enlace",
+                href: `/producto/${producto.slug}`
+            }, [
 
-                producto.imagen_url
-                    ? crear("img", {
-                        clase: "producto__imagen",
-                        src: producto.imagen_url,
-                        alt: producto.nombre,
-                        loading: "lazy"
-                      })
-                    : crear("div", { clase: "producto__sin-imagen" }, [icono("imagen")]),
+                crear("div", { clase: "producto__marco" }, [
 
-                cintas.length > 0 && crear("div", { clase: "producto__cintas" }, cintas)
+                    producto.imagen_url
+                        ? crear("img", {
+                            clase: "producto__imagen",
+                            src: producto.imagen_url,
+                            alt: producto.nombre,
+                            loading: "lazy"
+                          })
+                        : crear("div", { clase: "producto__sin-imagen" }, [icono("imagen")]),
+
+                    cintas.length > 0 && crear("div", { clase: "producto__cintas" }, cintas)
+                ]),
+
+                crear("div", { clase: "producto__cuerpo" }, [
+
+                    producto.categoria && crear("span", {
+                        clase: "producto__categoria",
+                        texto: producto.categoria.nombre
+                    }),
+
+                    crear("h3", { clase: "producto__nombre", texto: producto.nombre }),
+
+                    crear("div", { clase: "producto__precios" }, [
+                        crear("span", { clase: "producto__precio", texto: precio(producto.precio) }),
+                        producto.en_oferta && crear("span", {
+                            clase: "producto__precio-anterior",
+                            texto: precio(producto.precio_anterior)
+                        })
+                    ])
+                ])
             ]),
 
-            crear("div", { clase: "producto__cuerpo" }, [
-
-                producto.categoria && crear("span", {
-                    clase: "producto__categoria",
-                    texto: producto.categoria.nombre
-                }),
-
-                crear("h3", { clase: "producto__nombre", texto: producto.nombre }),
-
-                crear("div", { clase: "producto__precios" }, [
-                    crear("span", { clase: "producto__precio", texto: precio(producto.precio) }),
-                    producto.en_oferta && crear("span", {
-                        clase: "producto__precio-anterior",
-                        texto: precio(producto.precio_anterior)
-                    })
-                ])
-            ])
+            botonAgregar(producto)
         ]);
+    }
+
+
+    // -------------------------------------------------
+    // AGREGAR AL CARRITO
+    //
+    // Se dibuja solo si la tienda tiene el módulo y el producto
+    // tiene stock. Confirma en el mismo botón durante un segundo,
+    // que es más claro que un cartel que aparece en otro lado.
+    // -------------------------------------------------
+
+    function botonAgregar(producto, { grande = false } = {}) {
+
+        const config = EP.tienda.config();
+
+        if (!config?.modulos?.carrito) return null;
+
+        if (!producto.hay_stock) {
+            return crear("div", { clase: "producto__pie" }, [
+                crear("button", {
+                    clase: "ep-boton ep-boton--secundario producto__agregar",
+                    type: "button",
+                    disabled: true,
+                    texto: "Sin stock"
+                })
+            ]);
+        }
+
+        const boton = crear("button", {
+            clase: "ep-boton ep-boton--primario producto__agregar" +
+                   (grande ? " producto__agregar--grande" : ""),
+            type: "button",
+            texto: "Agregar al carrito",
+            onClick: () => {
+                EP.carrito.agregar(producto, 1);
+                boton.classList.add("es-agregado");
+                boton.textContent = "Agregado ✓";
+                clearTimeout(boton.dataset.temporizador);
+                boton.dataset.temporizador = setTimeout(() => {
+                    boton.classList.remove("es-agregado");
+                    boton.textContent = "Agregar al carrito";
+                }, 1400);
+            }
+        });
+
+        return crear("div", { clase: "producto__pie" }, [boton]);
     }
 
 
@@ -149,6 +204,7 @@ window.EP = window.EP || {};
 
     EP.piezas = {
         tarjetaProducto,
+        botonAgregar,
         tarjetaCategoria,
         esqueletoProductos,
         vacio,

@@ -21,6 +21,8 @@ const { subirImagen, subirImagenes } = require("../../middleware/upload");
 const resumen = require("../../controllers/admin/resumen");
 const categorias = require("../../controllers/admin/categorias");
 const productos = require("../../controllers/admin/productos");
+const pedidos = require("../../controllers/admin/pedidos");
+const clientes = require("../../controllers/admin/clientes");
 const { MAX_IMAGENES } = require("../../repositories/productos");
 
 
@@ -121,6 +123,47 @@ router.delete("/productos/:id/imagenes/:imagenId",
 router.patch("/productos/:id/imagenes/:imagenId/principal",
     conCatalogo, requirePermiso("productos.editar"),
     productos.principal);
+
+
+
+// =====================================================
+// PEDIDOS
+//
+// No se crean ni se eliminan desde el panel: entran desde
+// la tienda y aca se siguen. Lo unico que cambia es el
+// estado, y cada cambio queda en el historial.
+// =====================================================
+
+const conPedidos = moduloActivo("pedidos");
+
+router.get("/pedidos",
+    conPedidos, requirePermiso("pedidos.ver"),
+    pedidos.listar);
+
+router.get("/pedidos/:id",
+    conPedidos, requirePermiso("pedidos.ver"),
+    pedidos.detalle);
+
+router.patch("/pedidos/:id/estado",
+    conPedidos, requirePermiso("pedidos.editar"),
+    pedidos.cambiarEstado);
+
+
+// =====================================================
+// CLIENTES
+// =====================================================
+
+router.get("/clientes",
+    requirePermiso("clientes.ver"),
+    clientes.listar);
+
+router.get("/clientes/:id",
+    requirePermiso("clientes.ver"),
+    clientes.detalle);
+
+router.put("/clientes/:id/notas",
+    requirePermiso("clientes.editar"),
+    clientes.guardarNotas);
 
 
 module.exports = router;

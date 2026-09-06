@@ -143,6 +143,49 @@
         });
 
 
+        // ---------- CANTIDAD Y AGREGAR ----------
+
+        const entradaCantidad = crear("input", {
+            type: "number", min: "1", max: "999", value: "1",
+            "aria-label": "Cantidad",
+            clase: "cantidad__valor"
+        });
+
+        const paso = (delta) => crear("button", {
+            clase: "cantidad__paso",
+            type: "button",
+            "aria-label": delta > 0 ? "Sumar uno" : "Restar uno",
+            texto: delta > 0 ? "+" : "−",
+            onClick: () => {
+                const nueva = Math.max(1, Math.min(999,
+                    (Number(entradaCantidad.value) || 1) + delta));
+                entradaCantidad.value = nueva;
+            }
+        });
+
+        const cantidad = crear("div", { clase: "cantidad" }, [
+            paso(-1), entradaCantidad, paso(1)
+        ]);
+
+
+        function botonAgregarAlCarrito(producto) {
+
+            const boton = crear("button", {
+                clase: "ep-boton ep-boton--primario",
+                type: "button",
+                texto: "Agregar al carrito",
+                onClick: () => {
+                    const cuantos = Math.max(1, Number(entradaCantidad.value) || 1);
+                    EP.carrito.agregar(producto, cuantos);
+                    boton.textContent = "Agregado ✓";
+                    setTimeout(() => { boton.textContent = "Agregar al carrito"; }, 1400);
+                }
+            });
+
+            return boton;
+        }
+
+
         const ficha = [
             producto.categoria && ["Categoría", producto.categoria.nombre],
             producto.sku && ["Código", producto.sku],
@@ -196,12 +239,17 @@
                     }),
 
                     crear("div", { clase: "detalle__acciones" }, [
-                        botonWhatsapp(config, producto),
-                        crear("a", {
-                            clase: "ep-boton ep-boton--secundario",
-                            href: "/contacto",
-                            texto: "Otras formas de contacto"
-                        })
+
+                        // Agregar al carrito es la acción principal.
+                        // Consultar por WhatsApp queda como alternativa
+                        // para quien prefiere hablar antes de comprar.
+                        config.modulos.carrito && producto.hay_stock &&
+                            crear("div", { clase: "detalle__agregar" }, [
+                                cantidad,
+                                botonAgregarAlCarrito(producto)
+                            ]),
+
+                        botonWhatsapp(config, producto)
                     ]),
 
                     crear("div", { clase: "ficha" },

@@ -16,9 +16,11 @@ const express = require("express");
 
 const { tenantResolver } = require("../../middleware/tenantResolver");
 const { moduloActivo } = require("../../middleware/modulo");
+const { limitarPorIp } = require("../../middleware/limitarIntentos");
 
 const tienda = require("../../controllers/publico/tienda");
 const catalogo = require("../../controllers/publico/catalogo");
+const pedidos = require("../../controllers/publico/pedidos");
 
 
 const router = express.Router();
@@ -47,6 +49,19 @@ const conCatalogo = moduloActivo("catalogo");
 router.get("/categorias", conCatalogo, catalogo.categorias);
 router.get("/productos", conCatalogo, catalogo.productos);
 router.get("/productos/:slug", conCatalogo, catalogo.detalle);
+
+
+// ---------- PEDIDOS ----------
+// Unico punto de la tienda que escribe en la base sin nadie
+// autenticado: va detras de un limite por IP para que no le
+// llenen el panel de pedidos falsos.
+
+router.post("/pedidos",
+    moduloActivo("pedidos"),
+    limitarPorIp("pedidos", 8, 10 * 60 * 1000,
+        "Recibimos varios pedidos tuyos seguidos. Esperá unos minutos " +
+        "o escribinos directamente."),
+    pedidos.crear);
 
 
 module.exports = router;
