@@ -220,6 +220,57 @@ vez.
 
 ---
 
+## La API
+
+Respuestas siempre `{ ok, data }` o `{ ok, error }`. Los listados agregan `meta`
+con la paginación.
+
+### Tienda — `/api/public` · sin token, tenant por dominio
+
+| | |
+|---|---|
+| `GET /tienda` | Nombre de la tienda y módulos habilitados |
+| `GET /categorias` | Categorías activas, con cuántos productos tiene cada una |
+| `GET /productos` | `?categoria=` `?buscar=` `?destacados=` `?novedades=` `?pagina=` `?por_pagina=` |
+| `GET /productos/:slug` | Detalle con sus imágenes y productos relacionados |
+
+Solo devuelve productos disponibles, y nunca expone `tenant_id`, el stock
+exacto ni las fechas internas.
+
+### Panel — `/api/admin` · token obligatorio, tenant del JWT
+
+| | |
+|---|---|
+| `GET · POST /categorias` | Listar y crear |
+| `PUT · DELETE /categorias/:id` | Editar y eliminar |
+| `PATCH /categorias/orden` | Guardar el orden de la lista |
+| `GET · POST /productos` | Listar con filtros y paginación; crear con imágenes |
+| `GET · PUT · DELETE /productos/:id` | Detalle, editar, eliminar |
+| `PATCH /productos/:id/disponible` | Sacar de la tienda sin borrar |
+| `PATCH /productos/orden` | Guardar el orden |
+| `POST /productos/:id/imagenes` | Agregar (hasta 6 por producto) |
+| `DELETE /productos/:id/imagenes/:imagenId` | Quitar una |
+| `PATCH /productos/:id/imagenes/:imagenId/principal` | Elegir cuál se muestra primero |
+
+Cada ruta pasa por `requirePermiso("productos.editar")` y por
+`moduloActivo("catalogo")`.
+
+**Cosas que resuelve el backend para que el cliente no tenga que pensarlas**
+
+- El slug de la URL se arma solo a partir del nombre, y si ya existe otro igual
+  en esa tienda se le agrega un número. Editar el nombre de un producto ya
+  publicado no le cambia el enlace.
+- Eliminar una categoría con productos responde `409` diciendo cuántos son;
+  repitiendo con `?desasignar=true` esos productos quedan sin categoría y la
+  categoría se borra, todo en una transacción.
+- Al borrar un producto o una imagen se borra también el archivo del disco.
+- `imagen_principal` se mantiene sola: al agregar la primera imagen, al borrar
+  la principal o al elegir otra.
+- Los precios se aceptan con coma o con punto, y vuelven al frontend como
+  número, no como texto.
+
+---
+
 ## Variables de entorno
 
 Ver `backend/.env.example`. `backend/.env` no se versiona.
@@ -233,7 +284,7 @@ Ver `backend/.env.example`. `backend/.env` no se versiona.
 | 3 | Base de datos y migraciones | ✅ |
 | 4 | Núcleo del backend (tenant, storage) | ✅ |
 | 5 | Autenticación y roles | ✅ |
-| 6 | API pública + productos y categorías | pendiente |
+| 6 | API pública + productos y categorías | ✅ |
 | 7 | Panel administrativo | pendiente |
 | 8 | Tienda pública | pendiente |
 | 9 | Editor de apariencia | pendiente |

@@ -10,9 +10,9 @@
 // cual es por el dominio.
 // =====================================================
 
-const config = require("../config/env");
-const { exito } = require("../utils/respuesta");
-const tenants = require("../repositories/tenants");
+const config = require("../../config/env");
+const { exito } = require("../../utils/respuesta");
+const tenants = require("../../repositories/tenants");
 
 
 async function identidad(req, res) {

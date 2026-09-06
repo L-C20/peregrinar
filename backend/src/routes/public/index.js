@@ -2,20 +2,23 @@
 // RUTAS PUBLICAS · LA TIENDA
 //
 // Sin token. El tenant lo determina tenantResolver a partir
-// del dominio, y queda en req.tenant para todo lo que sigue.
+// del dominio y queda en req.tenant para todo lo que sigue.
 //
-// REGLA: ninguna consulta de este arbol puede leer datos sin
-// filtrar por req.tenant.id. Es el lugar donde el proyecto
-// anterior filtraba productos de todas las tiendas juntas.
+// REGLA: ninguna consulta de este arbol lee sin filtrar por
+// req.tenant.id. Los repositorios lo exigen: una consulta
+// sin tenant ni siquiera se ejecuta.
 //
-// El catálogo y el resto de las secciones se agregan en la
-// Etapa 6.
+// Es exactamente el lugar donde el proyecto anterior
+// devolvia los productos de todas las tiendas mezclados.
 // =====================================================
 
 const express = require("express");
 
 const { tenantResolver } = require("../../middleware/tenantResolver");
-const tienda = require("../../controllers/tienda");
+const { moduloActivo } = require("../../middleware/modulo");
+
+const tienda = require("../../controllers/publico/tienda");
+const catalogo = require("../../controllers/publico/catalogo");
 
 
 const router = express.Router();
@@ -27,6 +30,17 @@ router.use(tenantResolver);
 
 // Identidad y módulos habilitados de la tienda.
 router.get("/tienda", tienda.identidad);
+
+
+// ---------- CATALOGO ----------
+// Si la tienda no tiene el módulo, responde 403 con un
+// mensaje entendible en vez de devolver datos.
+
+const conCatalogo = moduloActivo("catalogo");
+
+router.get("/categorias", conCatalogo, catalogo.categorias);
+router.get("/productos", conCatalogo, catalogo.productos);
+router.get("/productos/:slug", conCatalogo, catalogo.detalle);
 
 
 module.exports = router;
