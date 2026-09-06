@@ -1,0 +1,66 @@
+/* =====================================================
+   TOKENS DE DISENO
+   
+   CONTRATO ENTRE EL EDITOR DE APARIENCIA Y LA TIENDA.
+
+   Los valores de :root son los PREDETERMINADOS de la
+   plataforma: lo que ve un tenant recien creado y a lo
+   que vuelve el boton "Restablecer apariencia".
+
+   En tiempo de ejecucion, la tienda pide su configuracion
+   a /api/public/apariencia y pisa unicamente las variables
+   de la seccion PERSONALIZABLES sobre <html>.
+   Ninguna hoja de estilo debe escribir un color literal.
+   ===================================================== */
+
+:root {
+
+    /* ---------- PERSONALIZABLES (editor de apariencia) ---------- */
+
+    --color-principal: #7C3AED;
+    --color-secundario: #F59E0B;
+    --color-fondo: #FFFFFF;
+    --color-texto: #1F2937;
+    --color-boton: var(--color-principal);
+    --color-boton-texto: #FFFFFF;
+    --color-enlace: var(--color-principal);
+
+    --fuente-principal: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --fuente-titulos: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --tamano-titulos: 1;      /* multiplicador: 0.9 chico / 1 medio / 1.15 grande */
+    --peso-titulos: 600;
+
+    --radio-boton: 8px;       /* 999px suave · 8px redondeado · 0 recto */
+    --radio-tarjeta: 12px;
+    --sombra-tarjeta: 0 1px 3px rgba(15, 23, 42, .08), 0 8px 24px rgba(15, 23, 42, .06);
+    --borde-tarjeta: 1px solid transparent;
+
+
+    /* ---------- FIJOS DE LA PLATAFORMA ---------- */
+
+    --color-superficie: #FFFFFF;
+    --color-superficie-2: #F8FAFC;
+    --color-borde: #E2E8F0;
+    --color-texto-suave: #64748B;
+
+    --color-exito: #059669;
+    --color-error: #DC2626;
+    --color-aviso: #D97706;
+    --color-info: #2563EB;
+
+    --espacio-1: 4px;
+    --espacio-2: 8px;
+    --espacio-3: 12px;
+    --espacio-4: 16px;
+    --espacio-5: 24px;
+    --espacio-6: 32px;
+    --espacio-7: 48px;
+    --espacio-8: 64px;
+
+    --contenedor-max: 1200px;
+
+    --transicion: 180ms cubic-bezier(.4, 0, .2, 1);
+
+    --z-modal: 900;
+    --z-notificacion: 1000;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Peregrinar Platform</title>
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+</head>
+<body>
+    <main style="max-width:var(--contenedor-max);margin:0 auto;padding:var(--espacio-8) var(--espacio-4)">
+        <h1>Peregrinar Platform</h1>
+        <p>Esqueleto de la Etapa 2. La tienda pública se construye en la Etapa 8.</p>
+
+        <div class="ep-tarjeta" style="margin-top:var(--espacio-5)">
+            <h3>Verificación de arquitectura</h3>
+            <p id="estado">Consultando <code>/api/health</code>…</p>
+            <div style="display:flex;gap:var(--espacio-2);flex-wrap:wrap">
+                <button class="ep-boton ep-boton--primario" id="probarNotificacion">Probar notificación</button>
+                <button class="ep-boton ep-boton--peligro" id="probarConfirmacion">Probar confirmación</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script>
+        (async () => {
+            const estado = document.getElementById("estado");
+            try {
+                const datos = await EP.api.get("/api/health");
+                estado.textContent =
+                    `API: ${datos.estado} · Base de datos: ${datos.baseDatos}` +
+                    (datos.detalle ? ` (${datos.detalle})` : "");
+            } catch (error) {
+                estado.textContent = `Error: ${error.message}`;
+            }
+        })();
+
+        document.getElementById("probarNotificacion").addEventListener("click", () => {
+            EP.notificar.exito("El sistema de notificaciones funciona correctamente");
+        });
+
+        document.getElementById("probarConfirmacion").addEventListener("click", async () => {
+            const confirmado = await EP.confirmar({
+                titulo: "¿Eliminar el producto?",
+                mensaje: "Esta acción no se puede deshacer.",
+                textoConfirmar: "Sí, eliminar",
+                peligro: true
+            });
+            EP.notificar[confirmado ? "aviso" : "info"](
+                confirmado ? "Confirmaste la acción" : "Cancelaste la acción"
+            );
+        });
+    </script>
+</body>
+</html>
