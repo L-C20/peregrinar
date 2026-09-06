@@ -391,9 +391,9 @@ En producción cambian tres cosas por su cuenta:
 | 4 | Núcleo del backend (tenant, storage) | ✅ |
 | 5 | Autenticación y roles | ✅ |
 | 6 | API pública + productos y categorías | ✅ |
-| 7 | Panel administrativo | pendiente |
+| 7 | Panel administrativo | ✅ |
 | 8 | Tienda pública | ✅ |
-| 9 | Editor de apariencia | pendiente |
+| 9 | Editor de apariencia | salteada en la ruta corta |
 | 10 | Clientes, pedidos y carrito | ✅ |
-| 11 | Contenido: banners, galerías, contacto, pagos, módulos | pendiente |
+| 11 | Contenido: banners, galerías, contacto, pagos, módulos | salteada en la ruta corta |
 | 12 | Producción | ✅ |
