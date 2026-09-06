@@ -109,7 +109,25 @@
                             texto: producto.categoria
                                 ? producto.categoria.nombre
                                 : "Sin categoría"
-                        })
+                        }),
+
+                        // En el teléfono las columnas de precio, stock y
+                        // estado no entran: sus datos aparecen acá.
+                        crear("div", { clase: "celda-producto__movil" }, [
+                            crear("span", {
+                                clase: "precio",
+                                texto: EP.fmt.precio(producto.precio)
+                            }),
+                            crear("span", {
+                                clase: "etiqueta " + (producto.disponible
+                                    ? "etiqueta--activo" : "etiqueta--inactivo"),
+                                texto: producto.disponible ? "A la venta" : "Oculto"
+                            }),
+                            producto.stock === 0 && crear("span", {
+                                clase: "etiqueta etiqueta--aviso",
+                                texto: "Sin stock"
+                            })
+                        ])
                     ])
                 ])
             ]),
@@ -523,15 +541,24 @@
             }))
         ]);
 
+        // La API entrega el precio como número (22350.9). En el campo
+        // tiene que verse como lo escribiría el cliente: con coma y
+        // con los dos decimales. El backend acepta ambas formas.
+        const paraEditar = (valor) =>
+            valor === null || valor === undefined || valor === ""
+                ? ""
+                : Number(valor).toFixed(2).replace(".", ",");
+
         const precio = crear("input", {
             clase: "control", id: "pPrecio", name: "precio",
-            type: "text", inputmode: "decimal", value: producto ? producto.precio : ""
+            type: "text", inputmode: "decimal",
+            value: producto ? paraEditar(producto.precio) : ""
         });
 
         const precioAnterior = crear("input", {
             clase: "control", id: "pPrecioAnterior", name: "precio_anterior",
             type: "text", inputmode: "decimal",
-            value: producto?.precio_anterior ?? ""
+            value: paraEditar(producto?.precio_anterior)
         });
 
         const stock = crear("input", {

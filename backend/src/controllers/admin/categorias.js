@@ -12,7 +12,6 @@ const { transaccion } = require("../../database/connection");
 const { exito, creado } = require("../../utils/respuesta");
 const { errores } = require("../../utils/errores");
 const validar = require("../../utils/validar");
-const slugs = require("../../utils/slug");
 const { tenantDe } = require("../../middleware/tenantResolver");
 const { guardarImagenes, eliminarImagen } = require("../../middleware/upload");
 const presentar = require("../presentar");
@@ -97,17 +96,13 @@ async function actualizar(req, res) {
 
     const datos = leerDatos(req);
 
-    // El slug solo cambia si lo pidieron o si cambió el nombre y
-    // el slug seguía derivándose de él. Cambiarlo rompe los
-    // enlaces que la gente ya tenga guardados.
+    // El slug se fija al crear y NO se toca al editar el nombre:
+    // es la dirección de la categoría en la tienda, y cambiarla
+    // rompe los enlaces que ya circulan. Solo cambia si lo piden.
     let slug = actual.slug;
 
     if (datos.slugPedido && datos.slugPedido !== actual.slug) {
         slug = await repo.generarSlug(tenantId, datos.slugPedido, id);
-
-    } else if (!datos.slugPedido && slugs.generar(actual.nombre) === actual.slug &&
-               slugs.generar(datos.nombre) !== actual.slug) {
-        slug = await repo.generarSlug(tenantId, datos.nombre, id);
     }
 
     const [subida] = await guardarImagenes(req, "categorias", {

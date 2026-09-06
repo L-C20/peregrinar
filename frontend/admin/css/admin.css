@@ -269,7 +269,12 @@ body.admin-body {
     border-radius: 8px;
     cursor: pointer;
     color: var(--ad-texto);
+    line-height: 0;
 }
+
+/* Sin medidas el SVG toma su tamaño por defecto (300x150) y el
+   botón queda deformado: no hereda las de .boton porque no lo es. */
+.hamburguesa svg { width: 20px; height: 20px; }
 
 
 /* ---------- CONTENIDO ---------- */
@@ -635,6 +640,11 @@ select.control {
 .celda-producto__nombre { font-weight: 600; line-height: 1.3; }
 .celda-producto__meta { font-size: .78rem; color: var(--ad-texto-suave); }
 
+/* En el teléfono no entran todas las columnas. En vez de esconder
+   las acciones detrás de un scroll horizontal que nadie descubre,
+   los datos de las columnas ocultas pasan acá, debajo del nombre. */
+.celda-producto__movil { display: none; }
+
 .precio { font-variant-numeric: tabular-nums; font-weight: 600; }
 .precio__anterior {
     display: block;
@@ -962,7 +972,26 @@ select.control {
 }
 
 @media (max-width: 560px) {
-    .tabla th:nth-child(n+3):not(:last-child),
-    .tabla td:nth-child(n+3):not(:last-child) { display: none; }
+
+    /* Quedan solo la primera columna y la de acciones. El resto de
+       los datos se muestra en .celda-producto__movil. */
+    .tabla th:nth-child(n+2):not(:last-child),
+    .tabla td:nth-child(n+2):not(:last-child) { display: none; }
+
+    .tabla th, .tabla td { padding-left: 12px; padding-right: 12px; }
+
+    .celda-producto { min-width: 0; }
+
+    .celda-producto__movil {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 5px;
+        font-size: .82rem;
+    }
+
+    .celda-producto__movil .precio { font-size: .85rem; }
+
     .metrica__valor { font-size: 1.5rem; }
 }

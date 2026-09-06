@@ -67,9 +67,14 @@ window.EP = window.EP || {};
         }
 
 
-        // Sesion vencida: se limpia y se vuelve al login
+        // Sesión vencida: se limpia y se vuelve al login, llevando el
+        // motivo para poder explicarlo allá. La notificación no
+        // alcanza: la redirección se la lleva puesta.
         if (respuesta.status === 401 && opciones.redirigirEn401 !== false) {
-            EP.sesion?.cerrar();
+            EP.sesion?.cerrar(
+                true,
+                "Tu sesión expiró por seguridad. Ingresá de nuevo para continuar."
+            );
             throw new ErrorApi("Tu sesión expiró. Ingresá nuevamente.", 401);
         }
 

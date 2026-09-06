@@ -12,7 +12,6 @@
 const { exito, creado, listado } = require("../../utils/respuesta");
 const { errores } = require("../../utils/errores");
 const validar = require("../../utils/validar");
-const slugs = require("../../utils/slug");
 const { tenantDe } = require("../../middleware/tenantResolver");
 const { guardarImagenes, eliminarImagen } = require("../../middleware/upload");
 const presentar = require("../presentar");
@@ -185,16 +184,18 @@ async function actualizar(req, res) {
 
     const datos = await leerDatos(req, tenantId);
 
-    // El slug no se toca salvo que lo pidan, o que venía del nombre
-    // y el nombre cambió. Cambiarlo rompe los enlaces ya compartidos.
+    // El slug se fija al crear y NO se toca al editar el nombre.
+    //
+    // Es la dirección del producto en la tienda. Si se regenerara
+    // sola, corregir una errata en el nombre rompería el enlace que
+    // el cliente ya mandó por WhatsApp o que Google tiene indexado,
+    // sin que nadie se entere.
+    //
+    // Solo cambia si lo piden explícitamente.
     let slug = actual.slug;
 
     if (datos.slugPedido && datos.slugPedido !== actual.slug) {
         slug = await repo.generarSlug(tenantId, datos.slugPedido, id);
-
-    } else if (!datos.slugPedido && slugs.generar(actual.nombre) === actual.slug &&
-               slugs.generar(datos.nombre) !== actual.slug) {
-        slug = await repo.generarSlug(tenantId, datos.nombre, id);
     }
 
     await repo.actualizar(tenantId, id, { ...datos, slug });

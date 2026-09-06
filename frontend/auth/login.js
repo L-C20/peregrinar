@@ -29,6 +29,15 @@
     }
 
 
+    // Si llegó acá porque se le venció la sesión, se le dice.
+    const motivo = EP.sesion.motivoDeSalida();
+
+    if (motivo) {
+        avisoTexto.textContent = motivo;
+        aviso.hidden = false;
+    }
+
+
     // -------------------------------------------------
     // NOMBRE DE LA TIENDA
     // Confirma de paso que el backend resolvió bien el tenant.

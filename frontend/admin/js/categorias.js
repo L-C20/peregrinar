@@ -41,7 +41,22 @@
                     miniatura(categoria),
                     crear("div", {}, [
                         crear("div", { clase: "celda-producto__nombre", texto: categoria.nombre }),
-                        crear("div", { clase: "celda-producto__meta", texto: `/${categoria.slug}` })
+                        crear("div", { clase: "celda-producto__meta", texto: `/${categoria.slug}` }),
+
+                        // En el teléfono se ocultan las columnas de
+                        // productos y estado: sus datos aparecen acá.
+                        crear("div", { clase: "celda-producto__movil" }, [
+                            crear("span", {
+                                texto: categoria.productos === 1
+                                    ? "1 producto"
+                                    : `${EP.fmt.numero(categoria.productos)} productos`
+                            }),
+                            crear("span", {
+                                clase: "etiqueta " + (categoria.activo
+                                    ? "etiqueta--activo" : "etiqueta--inactivo"),
+                                texto: categoria.activo ? "Visible" : "Oculta"
+                            })
+                        ])
                     ])
                 ])
             ]),
