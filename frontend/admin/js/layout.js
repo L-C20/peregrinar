@@ -276,10 +276,93 @@ window.EP = window.EP || {};
 
 
     // -------------------------------------------------
+    // ABIERTO COMO ARCHIVO, NO COMO PAGINA
+    //
+    // Si alguien abre el .html con doble clic, o lo sirve
+    // desde otro puerto (el "Live Server" de un editor), el
+    // navegador no encuentra lo que el panel pide en /shared
+    // ni la API. Sin este aviso, la pantalla se queda con el
+    // circulito girando para siempre y no hay forma de que
+    // una persona que no programa entienda por que.
+    //
+    // Se detecta por lo que falta, no por el protocolo: asi
+    // cubre tambien el caso del servidor equivocado, donde la
+    // direccion parece correcta pero /shared responde 404.
+    //
+    // Escrito sin EP.dom a proposito: es el aviso de que las
+    // cosas no cargaron, no puede depender de que hayan
+    // cargado.
+    // -------------------------------------------------
+
+    function servidoPorLaApp() {
+        return Boolean(window.EP && EP.api && EP.sesion);
+    }
+
+
+    function explicarQueFalta() {
+
+        const direccion = "http://localhost:3000/admin/" +
+            (location.pathname.split("/").pop() || "");
+
+        const caja = document.createElement("div");
+        caja.setAttribute("style", [
+            "max-width:560px", "margin:12vh auto", "padding:32px",
+            "font-family:system-ui,-apple-system,'Segoe UI',sans-serif",
+            "line-height:1.6", "color:#101828",
+            "border:1px solid #E4E7EC", "border-radius:12px",
+            "background:#fff"
+        ].join(";"));
+
+        const titulo = document.createElement("h1");
+        titulo.textContent = "Esta página hay que abrirla desde el servidor";
+        titulo.setAttribute("style", "margin:0 0 14px;font-size:1.3rem");
+
+        const explicacion = document.createElement("p");
+        explicacion.setAttribute("style", "margin:0 0 18px;color:#475467");
+        explicacion.textContent =
+            "El panel está abierto como un archivo suelto, así que no encuentra " +
+            "ni sus estilos ni sus datos. Por eso queda cargando y no aparece nada.";
+
+        const comoSeAbre = document.createElement("p");
+        comoSeAbre.setAttribute("style", "margin:0 0 10px;color:#475467");
+        comoSeAbre.textContent = "Con el servidor encendido, entrá por acá:";
+
+        const enlace = document.createElement("a");
+        enlace.href = direccion;
+        enlace.textContent = direccion;
+        enlace.setAttribute("style", [
+            "display:block", "padding:12px 14px", "margin-bottom:18px",
+            "border-radius:8px", "background:#EEF2FF", "color:#4338CA",
+            "font-family:ui-monospace,Menlo,Consolas,monospace",
+            "font-size:.9rem", "word-break:break-all"
+        ].join(";"));
+
+        const encender = document.createElement("p");
+        encender.setAttribute("style", "margin:0;color:#667085;font-size:.9rem");
+        encender.textContent =
+            "Si no responde, el servidor no está encendido: en la carpeta " +
+            "backend, ejecutá npm run dev.";
+
+        caja.append(titulo, explicacion, comoSeAbre, enlace, encender);
+
+        document.body.textContent = "";
+        document.body.setAttribute("style", "background:#F6F7F9;margin:0");
+        document.body.append(caja);
+    }
+
+
+    // -------------------------------------------------
     // ARRANQUE
     // -------------------------------------------------
 
     async function iniciar({ titulo } = {}) {
+
+        // Antes que nada: si el panel no lo esta sirviendo la
+        // aplicacion, nada de lo que sigue puede funcionar.
+        if (!servidoPorLaApp()) {
+            explicarQueFalta();
+            return new Promise(() => {});
+        }
 
         if (!EP.sesion.requerir()) return new Promise(() => {});
 
