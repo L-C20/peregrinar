@@ -247,6 +247,14 @@ router.put("/configuracion/identidad",
 router.delete("/configuracion/identidad/:imagen",
     editarConfiguracion, configuracion.quitarImagen);
 
+// Colores y tipografias. Escriben la misma tabla que la
+// identidad, pero cada uno solo sus columnas.
+router.put("/configuracion/apariencia",
+    editarConfiguracion, configuracion.guardarApariencia);
+
+router.post("/configuracion/apariencia/restablecer",
+    editarConfiguracion, configuracion.restablecerApariencia);
+
 router.put("/configuracion/contacto", editarConfiguracion, configuracion.guardarContacto);
 
 router.put("/configuracion/redes", editarConfiguracion, configuracion.guardarRedes);

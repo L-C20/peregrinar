@@ -79,6 +79,72 @@ function guardarIdentidad(tenantId, {
 }
 
 
+// Colores, tipografias y estilo. La otra mitad de la tabla:
+// escribir solo estas columnas deja intacta la identidad.
+function guardarApariencia(tenantId, {
+    colorPrincipal, colorSecundario, colorFondo, colorTexto,
+    colorBoton, colorBotonTexto, colorEnlace,
+    fuentePrincipal, fuenteTitulos, tamanoTitulos, pesoTitulos,
+    estiloBotones, estiloTarjetas
+}) {
+    return fila(tenantId,
+        `UPDATE configuracion_apariencia SET
+             color_principal   = $2,
+             color_secundario  = $3,
+             color_fondo       = $4,
+             color_texto       = $5,
+             color_boton       = $6,
+             color_boton_texto = $7,
+             color_enlace      = $8,
+             fuente_principal  = $9,
+             fuente_titulos    = $10,
+             tamano_titulos    = $11,
+             peso_titulos      = $12,
+             estilo_botones    = $13,
+             estilo_tarjetas   = $14
+         WHERE tenant_id = $1
+         RETURNING ${CAMPOS_APARIENCIA}`,
+        [
+            colorPrincipal, colorSecundario, colorFondo, colorTexto,
+            colorBoton, colorBotonTexto, colorEnlace,
+            fuentePrincipal, fuenteTitulos, tamanoTitulos, pesoTitulos,
+            estiloBotones, estiloTarjetas
+        ]
+    );
+}
+
+
+// Volver a como se ve una tienda recien creada.
+//
+// SET ... = DEFAULT deja que los valores por defecto vivan en un
+// solo lugar, la migracion 005, que a su vez coinciden con
+// tokens.css. Si estuvieran copiados acá, cambiar uno significaria
+// acordarse de cambiar tres archivos.
+//
+// No toca el nombre, el logo ni los textos: restablecer la
+// apariencia no puede borrarle la identidad a nadie.
+function restablecerApariencia(tenantId) {
+    return fila(tenantId,
+        `UPDATE configuracion_apariencia SET
+             color_principal   = DEFAULT,
+             color_secundario  = DEFAULT,
+             color_fondo       = DEFAULT,
+             color_texto       = DEFAULT,
+             color_boton       = DEFAULT,
+             color_boton_texto = DEFAULT,
+             color_enlace      = DEFAULT,
+             fuente_principal  = DEFAULT,
+             fuente_titulos    = DEFAULT,
+             tamano_titulos    = DEFAULT,
+             peso_titulos      = DEFAULT,
+             estilo_botones    = DEFAULT,
+             estilo_tarjetas   = DEFAULT
+         WHERE tenant_id = $1
+         RETURNING ${CAMPOS_APARIENCIA}`
+    );
+}
+
+
 // Borra la clave de una imagen de identidad. Se usa cuando el
 // cliente quita el logo o el favicon; el archivo en si lo borra
 // el controlador.
@@ -342,6 +408,7 @@ async function pedidosConMedio(tenantId, tipo) {
 module.exports = {
 
     apariencia, guardarIdentidad, quitarImagenIdentidad,
+    guardarApariencia, restablecerApariencia,
 
     sitio, guardarSitio,
 

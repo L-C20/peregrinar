@@ -50,7 +50,8 @@ window.EP = window.EP || {};
         {
             titulo: "Mi tienda",
             enlaces: [
-                { id: "apariencia", texto: "Apariencia", icono: "apariencia", pronto: true },
+                { id: "apariencia", texto: "Apariencia", icono: "apariencia",
+                  url: "/admin/apariencia.html" },
                 { id: "contenido", texto: "Contenido", icono: "contenido",
                   url: "/admin/contenido.html" },
                 { id: "configuracion", texto: "Configuración", icono: "configuracion",

@@ -231,6 +231,37 @@ function identidad(fila) {
 }
 
 
+// Colores, tipografias y estilo, tal cual estan en la base.
+//
+// A diferencia de lo que recibe la tienda publica, acá NO se
+// traducen a las variables de CSS: el editor necesita "chico" y
+// "redondeado" para marcar la opcion elegida en el formulario.
+// La traduccion la hace el navegador, con la misma tabla que usa
+// la tienda (shared/js/apariencia.js).
+function aparienciaEditable(fila) {
+
+    if (!fila) return null;
+
+    return {
+        color_principal: fila.color_principal,
+        color_secundario: fila.color_secundario,
+        color_fondo: fila.color_fondo,
+        color_texto: fila.color_texto,
+        color_boton: fila.color_boton,
+        color_boton_texto: fila.color_boton_texto,
+        color_enlace: fila.color_enlace,
+
+        fuente_principal: fila.fuente_principal,
+        fuente_titulos: fila.fuente_titulos,
+        tamano_titulos: fila.tamano_titulos,
+        peso_titulos: fila.peso_titulos,
+
+        estilo_botones: fila.estilo_botones,
+        estilo_tarjetas: fila.estilo_tarjetas
+    };
+}
+
+
 function sitio(fila) {
 
     if (!fila) return null;
@@ -257,5 +288,5 @@ module.exports = {
     imagen, imagenes,
     banner, banners,
     paginaContenido, paginasContenido,
-    identidad, sitio
+    identidad, aparienciaEditable, sitio
 };

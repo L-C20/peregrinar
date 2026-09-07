@@ -22,6 +22,11 @@ const contenido = require("../../repositories/contenido");
 
 
 // Multiplicadores que entiende el CSS de la tienda.
+//
+// OJO: las mismas tablas estan en frontend/shared/js/apariencia.js,
+// que es quien las aplica del otro lado del cable (y las necesita
+// crudas para la vista previa del editor). Si cambia una, cambia
+// la otra.
 const TAMANOS = { chico: 0.9, medio: 1, grande: 1.15 };
 
 // Cada estilo de botón es un radio distinto.

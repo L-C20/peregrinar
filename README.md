@@ -212,9 +212,14 @@ el driver. En la base se guarda `clave`, nunca la URL.
 | `/preguntas-frecuentes` · `/contacto` | |
 
 `tienda.css` no tiene **ni un color ni una tipografía literal**: todo sale de
-las variables de `shared/css/tokens.css`, que `tienda.js` pisa al cargar con lo
-que el cliente guardó en su apariencia. Por eso el editor de apariencia
-(Etapa 9) va a poder cambiar la tienda entera sin tocar una línea de CSS.
+las variables de `shared/css/tokens.css`, que se pisan al cargar con lo que el
+cliente guardó en su apariencia. Por eso el editor de apariencia cambia la
+tienda entera sin tocar una línea de CSS.
+
+Esa traducción —de lo guardado en la base a las variables de CSS— vive en
+`shared/js/apariencia.js`, y la usan **los dos**: la tienda sobre `<html>` y el
+editor del panel sobre su recuadro de vista previa. Si cada uno tradujera por
+su cuenta, la vista previa terminaría mostrando algo que después no pasa.
 
 Todo lo que se lee en estas páginas se carga desde el panel: los banners de la
 portada, las páginas de texto, las preguntas frecuentes, los datos de contacto,
@@ -367,6 +372,8 @@ Cada ruta pasa por `requirePermiso("productos.editar")` y por
 |---|---|
 | `GET /configuracion` | Identidad, contacto, redes y SEO en una sola respuesta |
 | `PUT /configuracion/identidad` | Nombre, logo, ícono y los textos de la portada |
+| `PUT /configuracion/apariencia` | Colores, tipografías y estilo |
+| `POST /configuracion/apariencia/restablecer` | Volver a los valores de fábrica |
 | `DELETE /configuracion/identidad/:imagen` | Quitar el logo o el ícono (`logo` \| `favicon`) |
 | `PUT /configuracion/contacto` | Teléfono, WhatsApp, dirección, horarios, mapa |
 | `PUT /configuracion/redes` | La lista entera: lo que no viene, se borra |
@@ -400,6 +407,13 @@ salteándose el plan.
   escríbalo el cliente como lo escriba.
 - Guardar el formulario de identidad sin volver a subir el logo no lo borra:
   para sacarlo hay un botón propio.
+- La tabla de apariencia la escriben dos pantallas —identidad y apariencia— y
+  cada una toca solo sus columnas, así guardar una no puede pisar la otra.
+  `Restablecer` usa `SET columna = DEFAULT`: los valores de fábrica viven
+  únicamente en la migración 005, no copiados en el código.
+- Las tipografías se validan contra una lista cerrada de diez. El valor termina
+  en una URL a Google Fonts: un dato mal cargado no puede hacer que la tienda
+  le pida algo a un tercero.
 
 ---
 
@@ -437,7 +451,7 @@ En producción cambian tres cosas por su cuenta:
 | 6 | API pública + productos y categorías | ✅ |
 | 7 | Panel administrativo | ✅ |
 | 8 | Tienda pública | ✅ |
-| 9 | Editor de apariencia | salteada en la ruta corta |
+| 9 | Editor de apariencia | ✅ |
 | 10 | Clientes, pedidos y carrito | ✅ |
 | 11 | Contenido y configuración de la tienda | ✅ |
 | 12 | Producción | ✅ |

@@ -1,21 +1,25 @@
 // =====================================================
 // CONTROLADOR DE ADMINISTRACION · CONFIGURACION
 //
-// Los datos de la tienda que no son catalogo ni ventas:
-// como se llama, como la encuentran, como la contactan y
+// Los datos de la tienda que no son catalogo ni ventas: como se
+// llama, como se ve, como la encuentran, como la contactan y
 // como se le paga.
 //
 // El tenant sale del token, siempre, via tenantDe(req).
 //
-// Lo que NO esta acá:
+// La tabla de apariencia se escribe desde DOS pantallas
+// distintas, y cada una toca solo sus columnas:
 //
-//   - Colores y tipografias. Son la otra mitad de la tabla de
-//     apariencia y tienen su propia pantalla, con vista previa.
+//   identidad   nombre, logo, icono y los textos de la portada
+//   apariencia  colores, tipografias y estilo
 //
-//   - Los modulos habilitados. Es lo que la tienda tiene
-//     contratado, no una preferencia: se administra desde
-//     /api/platform. Un duenio de tienda que pudiera encenderse
-//     modulos solo estaria salteandose el plan.
+// Estan separadas porque son dos tareas distintas y porque asi
+// guardar una no puede pisar la otra sin querer.
+//
+// Lo que NO esta acá son los modulos habilitados. Es lo que la
+// tienda tiene contratado, no una preferencia: se administra
+// desde /api/platform. Un duenio de tienda que pudiera
+// encenderse modulos solo estaria salteandose el plan.
 // =====================================================
 
 const { transaccion } = require("../../database/connection");
@@ -37,6 +41,44 @@ const REDES = [
 const TIPOS_PAGO = ["efectivo", "transferencia", "mercadopago", "tarjeta", "otro"];
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const COLOR = /^#[0-9a-f]{6}$/i;
+
+
+// Las mismas diez que sabe cargar la tienda. La lista es cerrada
+// porque el valor termina en una URL a Google Fonts: un dato mal
+// cargado no puede hacer que la tienda le pida algo a un tercero.
+//
+// OJO: la misma lista esta en frontend/shared/js/apariencia.js.
+// Si se agrega una fuente, va en los dos lados.
+const FUENTES = [
+    "Inter", "Playfair Display", "Lora", "Merriweather",
+    "Libre Baskerville", "Source Serif 4", "Poppins",
+    "Montserrat", "Nunito", "Work Sans"
+];
+
+const TAMANOS = ["chico", "medio", "grande"];
+const PESOS = ["400", "500", "600", "700", "800"];
+const ESTILOS_BOTON = ["recto", "redondeado", "suave"];
+const ESTILOS_TARJETA = ["plana", "borde", "sombra"];
+
+
+// La base tambien lo verifica, pero un CHECK devuelve un error de
+// PostgreSQL: acá se dice qué campo es y qué se esperaba.
+function color(valor, campo, porDefecto) {
+
+    const limpio = validar.texto(valor, { campo, max: 7 });
+
+    if (!limpio) return porDefecto;
+
+    if (!COLOR.test(limpio)) {
+        throw errores.solicitudInvalida(
+            `${campo.charAt(0).toUpperCase() + campo.slice(1)} no es un color válido`
+        );
+    }
+
+    return limpio.toUpperCase();
+}
 
 
 // Busca entre lo subido el archivo de un campo concreto: el
@@ -82,6 +124,7 @@ async function leer(req, res) {
 
     return exito(res, {
         identidad: presentar.identidad(apariencia),
+        apariencia: presentar.aparienciaEditable(apariencia),
         contacto: contacto || {},
         sitio: presentar.sitio(sitio),
         redes: redes.map(red => ({ red: red.red, url: red.url }))
@@ -173,6 +216,103 @@ async function quitarImagen(req, res) {
         mensaje: columna === "logo"
             ? "Se quitó el logo. En la tienda vuelve a aparecer el nombre escrito."
             : "Se quitó el ícono de la pestaña."
+    });
+}
+
+
+// =====================================================
+// PUT /api/admin/configuracion/apariencia
+//
+// Colores, tipografias y estilo. NO toca el nombre, el logo ni
+// los textos: son la otra pantalla.
+// =====================================================
+
+async function guardarApariencia(req, res) {
+
+    const tenantId = tenantDe(req);
+
+    const actual = await repo.apariencia(tenantId);
+
+    if (!actual) {
+        throw errores.noEncontrado(
+            "Esta tienda todavía no tiene una apariencia guardada"
+        );
+    }
+
+    // Cada campo que no venga conserva lo que ya estaba. Asi, un
+    // formulario parcial no le pone a nadie el fondo en blanco.
+    const apariencia = await repo.guardarApariencia(tenantId, {
+
+        colorPrincipal: color(req.body.color_principal,
+            "el color principal", actual.color_principal),
+
+        colorSecundario: color(req.body.color_secundario,
+            "el color de las ofertas", actual.color_secundario),
+
+        colorFondo: color(req.body.color_fondo,
+            "el color de fondo", actual.color_fondo),
+
+        colorTexto: color(req.body.color_texto,
+            "el color del texto", actual.color_texto),
+
+        colorBoton: color(req.body.color_boton,
+            "el color de los botones", actual.color_boton),
+
+        colorBotonTexto: color(req.body.color_boton_texto,
+            "el color del texto de los botones", actual.color_boton_texto),
+
+        colorEnlace: color(req.body.color_enlace,
+            "el color de los enlaces", actual.color_enlace),
+
+        fuentePrincipal: validar.opcion(req.body.fuente_principal, FUENTES, {
+            campo: "la tipografía del texto", porDefecto: actual.fuente_principal
+        }),
+
+        fuenteTitulos: validar.opcion(req.body.fuente_titulos, FUENTES, {
+            campo: "la tipografía de los títulos", porDefecto: actual.fuente_titulos
+        }),
+
+        tamanoTitulos: validar.opcion(req.body.tamano_titulos, TAMANOS, {
+            campo: "el tamaño de los títulos", porDefecto: actual.tamano_titulos
+        }),
+
+        pesoTitulos: validar.opcion(String(req.body.peso_titulos ?? ""), PESOS, {
+            campo: "el grosor de los títulos", porDefecto: actual.peso_titulos
+        }),
+
+        estiloBotones: validar.opcion(req.body.estilo_botones, ESTILOS_BOTON, {
+            campo: "la forma de los botones", porDefecto: actual.estilo_botones
+        }),
+
+        estiloTarjetas: validar.opcion(req.body.estilo_tarjetas, ESTILOS_TARJETA, {
+            campo: "el estilo de las tarjetas", porDefecto: actual.estilo_tarjetas
+        })
+    });
+
+    return exito(res, {
+        apariencia: presentar.aparienciaEditable(apariencia),
+        mensaje: "La apariencia de tu tienda se guardó correctamente"
+    });
+}
+
+
+// -----------------------------------------------------
+// POST /api/admin/configuracion/apariencia/restablecer
+// -----------------------------------------------------
+
+async function restablecerApariencia(req, res) {
+
+    const apariencia = await repo.restablecerApariencia(tenantDe(req));
+
+    if (!apariencia) {
+        throw errores.noEncontrado(
+            "Esta tienda todavía no tiene una apariencia guardada"
+        );
+    }
+
+    return exito(res, {
+        apariencia: presentar.aparienciaEditable(apariencia),
+        mensaje: "La apariencia volvió a los colores y las tipografías originales"
     });
 }
 
@@ -435,6 +575,7 @@ async function eliminarMedioPago(req, res) {
 module.exports = {
     leer,
     guardarIdentidad, quitarImagen,
+    guardarApariencia, restablecerApariencia,
     guardarContacto,
     guardarRedes,
     guardarSitio,

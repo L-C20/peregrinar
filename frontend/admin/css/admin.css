@@ -1221,3 +1221,339 @@ select.control {
 .editor__area p { margin: 0 0 12px; }
 .editor__area ul, .editor__area ol { margin: 0 0 12px; padding-left: 22px; }
 .editor__area a { color: var(--ad-acento); }
+
+
+/* =====================================================
+   EDITOR DE APARIENCIA
+
+   Dos columnas: los controles a la izquierda y la vista
+   previa a la derecha, pegada arriba para que se vea
+   mientras se recorre el formulario.
+
+   En el teléfono la vista previa va PRIMERO: si quedara
+   abajo, el cliente cambiaría un color sin ver qué pasa.
+   ===================================================== */
+
+.apariencia {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-areas: "controles vista";
+    gap: 20px;
+    align-items: start;
+}
+
+.apariencia__controles { grid-area: controles; min-width: 0; }
+
+.apariencia__vista {
+    grid-area: vista;
+    position: sticky;
+    top: 16px;
+    min-width: 0;
+}
+
+@media (max-width: 1000px) {
+    .apariencia {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "vista" "controles";
+    }
+    .apariencia__vista { position: static; }
+}
+
+
+/* ---------- CONTROL DE COLOR ---------- */
+
+.color {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--ad-borde-fuerte);
+    border-radius: 8px;
+    background: var(--ad-superficie);
+}
+
+.color:focus-within {
+    border-color: var(--ad-acento);
+    box-shadow: 0 0 0 3px var(--ad-acento-suave);
+}
+
+/* El cuadrito nativo: se le saca el marco propio para que
+   parezca una muestra de color y no un control del sistema. */
+.color__muestra {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    padding: 0;
+    border: 1px solid var(--ad-borde);
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+}
+
+.color__muestra::-webkit-color-swatch-wrapper { padding: 2px; }
+.color__muestra::-webkit-color-swatch { border: 0; border-radius: 4px; }
+.color__muestra::-moz-color-swatch { border: 0; border-radius: 4px; }
+
+.color__nombre { flex: 1; font-size: .85rem; font-weight: 600; }
+
+.color__codigo {
+    width: 88px;
+    padding: 5px 8px;
+    border: 1px solid var(--ad-borde);
+    border-radius: 6px;
+    font: inherit;
+    font-size: .8rem;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    text-transform: uppercase;
+    color: var(--ad-texto);
+}
+
+.color + .color { margin-top: 8px; }
+
+
+/* ---------- COMBINACIONES SUGERIDAS ---------- */
+
+.paletas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 8px;
+}
+
+.paleta {
+    display: block;
+    padding: 9px;
+    border: 1px solid var(--ad-borde);
+    border-radius: 8px;
+    background: var(--ad-superficie);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.paleta:hover { border-color: var(--ad-acento); }
+
+.paleta__muestras { display: flex; gap: 3px; margin-bottom: 6px; }
+
+.paleta__muestra {
+    width: 100%;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(16, 24, 40, .08);
+}
+
+.paleta__nombre { font-size: .78rem; font-weight: 600; }
+
+
+/* ---------- OPCIONES EN BOTONES ---------- */
+
+.opciones { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.opcion {
+    padding: 7px 13px;
+    border: 1px solid var(--ad-borde-fuerte);
+    border-radius: 7px;
+    background: var(--ad-superficie);
+    font: inherit;
+    font-size: .82rem;
+    color: var(--ad-texto-suave);
+    cursor: pointer;
+}
+
+.opcion:hover { color: var(--ad-texto); }
+
+.opcion[aria-pressed="true"] {
+    border-color: var(--ad-acento);
+    background: var(--ad-acento-suave);
+    color: var(--ad-acento-oscuro);
+    font-weight: 600;
+}
+
+.opcion:focus-visible { outline: 2px solid var(--ad-acento); outline-offset: 1px; }
+
+
+/* ---------- AVISO DE LEGIBILIDAD ---------- */
+
+.aviso-contraste {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 11px 13px;
+    border-radius: 8px;
+    background: var(--ad-aviso-suave);
+    color: var(--ad-aviso);
+    font-size: .82rem;
+    line-height: 1.45;
+}
+
+.aviso-contraste svg { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; }
+
+
+/* =====================================================
+   VISTA PREVIA DE LA TIENDA
+
+   Una tienda en chiquito. NO usa las variables del panel:
+   usa las de tokens.css, que son las que usa la tienda de
+   verdad, escritas sobre este recuadro por
+   shared/js/apariencia.js. Es la misma traducción que
+   corre en la tienda, así que lo que se ve acá es lo que
+   se va a ver allá.
+   ===================================================== */
+
+.vp {
+    border: 1px solid var(--ad-borde);
+    border-radius: var(--ad-radio);
+    overflow: hidden;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: var(--fuente-principal);
+    box-shadow: var(--ad-sombra);
+}
+
+.vp__barra {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.vp__marca {
+    font-family: var(--fuente-titulos);
+    font-weight: var(--peso-titulos);
+    font-size: calc(1.05rem * var(--tamano-titulos));
+    line-height: 1.2;
+}
+
+.vp__nav {
+    display: flex;
+    gap: 13px;
+    margin-left: auto;
+    font-size: .78rem;
+}
+
+.vp__nav span { opacity: .85; }
+.vp__nav .es-enlace { color: var(--color-enlace); }
+
+.vp__hero {
+    padding: 34px 22px 30px;
+    background:
+        radial-gradient(120% 120% at 12% 0%,
+            color-mix(in srgb, var(--color-principal) 13%, transparent), transparent 58%),
+        radial-gradient(100% 100% at 95% 10%,
+            color-mix(in srgb, var(--color-secundario) 12%, transparent), transparent 55%);
+}
+
+.vp__titulo {
+    margin: 0 0 8px;
+    font-family: var(--fuente-titulos);
+    font-weight: var(--peso-titulos);
+    font-size: calc(1.75rem * var(--tamano-titulos));
+    line-height: 1.15;
+}
+
+.vp__bajada {
+    margin: 0 0 18px;
+    font-size: .88rem;
+    opacity: .78;
+    max-width: 42ch;
+}
+
+.vp__acciones { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.vp__boton {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: var(--radio-boton);
+    background: var(--color-boton);
+    color: var(--color-boton-texto);
+    font: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.vp__enlace {
+    color: var(--color-enlace);
+    font-size: .85rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.vp__seccion { padding: 22px; }
+
+.vp__seccion-titulo {
+    margin: 0 0 14px;
+    font-family: var(--fuente-titulos);
+    font-weight: var(--peso-titulos);
+    font-size: calc(1.05rem * var(--tamano-titulos));
+}
+
+.vp__grilla {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+@media (max-width: 560px) {
+    .vp__grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .vp__grilla > :last-child { display: none; }
+}
+
+.vp__tarjeta {
+    position: relative;
+    border: var(--borde-tarjeta);
+    border-radius: var(--radio-tarjeta);
+    background: var(--color-superficie);
+    box-shadow: var(--sombra-tarjeta);
+    overflow: hidden;
+}
+
+.vp__foto {
+    height: 78px;
+    background: color-mix(in srgb, var(--color-texto) 7%, var(--color-fondo));
+}
+
+.vp__datos { padding: 10px 11px 12px; }
+
+.vp__nombre {
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 5px;
+}
+
+.vp__precio { font-size: .85rem; font-weight: 700; }
+
+.vp__antes {
+    margin-left: 6px;
+    font-size: .74rem;
+    font-weight: 400;
+    opacity: .55;
+    text-decoration: line-through;
+}
+
+.vp__cinta {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--color-secundario);
+    color: #1a1a1a;
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+}
+
+.vp__pie {
+    padding: 14px 22px;
+    border-top: 1px solid var(--color-borde);
+    font-size: .75rem;
+    opacity: .7;
+}
+
+.vp__leyenda {
+    margin-top: 10px;
+    font-size: .78rem;
+    color: var(--ad-texto-suave);
+    text-align: center;
+}

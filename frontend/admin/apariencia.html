@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Apariencia · Panel</title>
+
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body" data-seccion="apariencia" data-titulo="Apariencia">
+
+    <main class="contenido" data-contenido>
+
+        <div class="pagina">
+            <div class="pagina__texto">
+                <h2 class="pagina__titulo">Apariencia</h2>
+                <p class="pagina__ayuda">
+                    Los colores y las tipografías de tu tienda. Lo de la derecha
+                    es cómo va a quedar: cambiá algo y mirá.
+                </p>
+            </div>
+            <div class="pagina__acciones">
+                <button class="boton boton--suave" type="button" id="botonRestablecer">
+                    Volver a los originales
+                </button>
+                <button class="boton boton--primario" type="button" id="botonGuardar">
+                    Guardar cambios
+                </button>
+            </div>
+        </div>
+
+        <div class="apariencia">
+            <div class="apariencia__controles" id="controles">
+                <div class="cargando"><span class="giro"></span></div>
+            </div>
+            <div class="apariencia__vista" id="vista"></div>
+        </div>
+
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/apariencia.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script src="js/comunes.js"></script>
+    <script src="js/cajon.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/apariencia.js"></script>
+
+</body>
+</html>

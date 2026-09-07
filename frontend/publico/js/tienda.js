@@ -92,104 +92,21 @@ window.EP = window.EP || {};
     // -------------------------------------------------
     // APARIENCIA
     //
-    // Se pisan las variables de tokens.css sobre <html>.
-    // Ninguna hoja de estilo tiene colores literales, así que
-    // con esto cambia la tienda entera.
+    // La traduccion de lo guardado a las variables de
+    // tokens.css vive en shared/js/apariencia.js, porque el
+    // editor del panel tiene que aplicar exactamente lo mismo
+    // sobre su vista previa. Si tradujera distinto, la vista
+    // previa mentiria.
+    //
+    // Ninguna hoja de estilo tiene colores literales, asi que
+    // con esas variables cambia la tienda entera.
     // -------------------------------------------------
-
-    // Solo se cargan tipografías de esta lista. El valor viene de
-    // la base y termina en una URL: una lista cerrada evita que un
-    // dato mal cargado pida cualquier cosa a un tercero.
-    const FUENTES = {
-        "Inter": "Inter:wght@400;500;600;700",
-        "Playfair Display": "Playfair+Display:wght@500;600;700",
-        "Lora": "Lora:wght@400;500;600;700",
-        "Merriweather": "Merriweather:wght@400;700",
-        "Libre Baskerville": "Libre+Baskerville:wght@400;700",
-        "Source Serif 4": "Source+Serif+4:wght@400;600;700",
-        "Poppins": "Poppins:wght@400;500;600;700",
-        "Montserrat": "Montserrat:wght@400;500;600;700",
-        "Nunito": "Nunito:wght@400;600;700",
-        "Work Sans": "Work+Sans:wght@400;500;600;700"
-    };
-
-    const RESPALDO_SERIF = 'Georgia, "Times New Roman", serif';
-    const RESPALDO_SANS = 'system-ui, -apple-system, "Segoe UI", sans-serif';
-    const SON_SERIF = new Set([
-        "Playfair Display", "Lora", "Merriweather",
-        "Libre Baskerville", "Source Serif 4"
-    ]);
-
-
-    function cargarFuentes(nombres) {
-
-        const familias = [...new Set(nombres)]
-            .filter(nombre => FUENTES[nombre])
-            .map(nombre => `family=${FUENTES[nombre]}`);
-
-        if (familias.length === 0) return;
-
-        // Precarga del origen: ahorra una vuelta de DNS y TLS.
-        document.head.append(
-            crear("link", { rel: "preconnect", href: "https://fonts.googleapis.com" }),
-            crear("link", { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true }),
-            crear("link", {
-                rel: "stylesheet",
-                href: `https://fonts.googleapis.com/css2?${familias.join("&")}&display=swap`
-            })
-        );
-    }
-
-
-    function pilaDeFuente(nombre) {
-        const respaldo = SON_SERIF.has(nombre) ? RESPALDO_SERIF : RESPALDO_SANS;
-        return FUENTES[nombre] ? `"${nombre}", ${respaldo}` : respaldo;
-    }
-
 
     function aplicarApariencia(apariencia) {
 
         if (!apariencia) return;
 
-        const raiz = document.documentElement.style;
-        const c = apariencia.colores;
-        const t = apariencia.tipografia;
-
-        raiz.setProperty("--color-principal", c.principal);
-        raiz.setProperty("--color-secundario", c.secundario);
-        raiz.setProperty("--color-fondo", c.fondo);
-        raiz.setProperty("--color-texto", c.texto);
-        raiz.setProperty("--color-boton", c.boton);
-        raiz.setProperty("--color-boton-texto", c.boton_texto);
-        raiz.setProperty("--color-enlace", c.enlace);
-
-        // La superficie de las tarjetas se calcula a partir del fondo
-        // para que no desentone si el cliente elige un fondo oscuro.
-        raiz.setProperty("--color-superficie", c.fondo);
-        raiz.setProperty("--color-borde",
-            `color-mix(in srgb, ${c.texto} 14%, transparent)`);
-
-        cargarFuentes([t.principal, t.titulos]);
-        raiz.setProperty("--fuente-principal", pilaDeFuente(t.principal));
-        raiz.setProperty("--fuente-titulos", pilaDeFuente(t.titulos));
-        raiz.setProperty("--tamano-titulos", String(t.tamano_titulos));
-        raiz.setProperty("--peso-titulos", t.peso_titulos);
-
-        raiz.setProperty("--radio-boton", apariencia.estilo.radio_boton);
-
-        // Cada estilo de tarjeta es una combinación distinta de
-        // borde y sombra.
-        const tarjetas = {
-            plana: { borde: "1px solid transparent", sombra: "none" },
-            borde: { borde: "1px solid var(--color-borde)", sombra: "none" },
-            sombra: {
-                borde: "1px solid transparent",
-                sombra: "0 1px 3px rgba(15,23,42,.07), 0 8px 24px rgba(15,23,42,.06)"
-            }
-        }[apariencia.estilo.tarjetas] || {};
-
-        if (tarjetas.borde) raiz.setProperty("--borde-tarjeta", tarjetas.borde);
-        if (tarjetas.sombra) raiz.setProperty("--sombra-tarjeta", tarjetas.sombra);
+        EP.apariencia.aplicar(document.documentElement, apariencia);
 
         if (apariencia.favicon_url) {
             document.head.append(
@@ -197,6 +114,7 @@ window.EP = window.EP || {};
             );
         }
     }
+
 
 
     // -------------------------------------------------
