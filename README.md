@@ -216,6 +216,11 @@ las variables de `shared/css/tokens.css`, que `tienda.js` pisa al cargar con lo
 que el cliente guardó en su apariencia. Por eso el editor de apariencia
 (Etapa 9) va a poder cambiar la tienda entera sin tocar una línea de CSS.
 
+Todo lo que se lee en estas páginas se carga desde el panel: los banners de la
+portada, las páginas de texto, las preguntas frecuentes, los datos de contacto,
+las redes y las formas de pago. **Nada de eso vive en el HTML**, así que el
+cliente cambia lo que dice su tienda sin pedirle nada a nadie.
+
 Los filtros del catálogo viven en la URL, no en una variable: así se puede
 compartir "las biblias en oferta" por WhatsApp, el botón atrás funciona y
 recargar no pierde lo que se estaba mirando.
@@ -343,6 +348,37 @@ encabezado.
 Cada ruta pasa por `requirePermiso("productos.editar")` y por
 `moduloActivo("catalogo")`.
 
+**Contenido** — `requirePermiso("contenido.editar")`
+
+| | |
+|---|---|
+| `GET · POST /contenido/banners` | Listar y crear (la imagen es obligatoria) |
+| `PUT · DELETE /contenido/banners/:id` | Editar y eliminar |
+| `PATCH /contenido/banners/orden` | Guardar el orden |
+| `GET · POST /contenido/paginas` | Listar y crear |
+| `PUT · DELETE /contenido/paginas/:id` | Editar y eliminar |
+| `GET · POST /contenido/faq` | Listar y crear |
+| `PUT · DELETE /contenido/faq/:id` | Editar y eliminar |
+| `PATCH /contenido/faq/orden` | Guardar el orden |
+
+**Configuración** — `requirePermiso("configuracion.editar")`
+
+| | |
+|---|---|
+| `GET /configuracion` | Identidad, contacto, redes y SEO en una sola respuesta |
+| `PUT /configuracion/identidad` | Nombre, logo, ícono y los textos de la portada |
+| `DELETE /configuracion/identidad/:imagen` | Quitar el logo o el ícono (`logo` \| `favicon`) |
+| `PUT /configuracion/contacto` | Teléfono, WhatsApp, dirección, horarios, mapa |
+| `PUT /configuracion/redes` | La lista entera: lo que no viene, se borra |
+| `PUT /configuracion/sitio` | SEO, imagen para compartir y franja de aviso |
+| `GET · POST /configuracion/medios-pago` | Listar y agregar una forma de pago |
+| `PUT · DELETE /configuracion/medios-pago/:id` | Editar y eliminar |
+
+Los **módulos habilitados no se tocan desde el panel de la tienda**: son lo que
+esa tienda tiene contratado, no una preferencia suya. Se administran desde
+`/api/platform`. Un dueño que pudiera encenderse módulos solo estaría
+salteándose el plan.
+
 **Cosas que resuelve el backend para que el cliente no tenga que pensarlas**
 
 - El slug de la URL se arma solo a partir del nombre, y si ya existe otro igual
@@ -356,6 +392,14 @@ Cada ruta pasa por `requirePermiso("productos.editar")` y por
   la principal o al elegir otra.
 - Los precios se aceptan con coma o con punto, y vuelven al frontend como
   número, no como texto.
+- El texto con formato de las páginas se limpia contra una lista de etiquetas
+  permitidas antes de guardarse (`utils/htmlSeguro.js`). No se filtra "lo
+  malo": cada etiqueta se reconstruye desde cero y lo único que sobrevive es
+  el `href` de un enlace, si apunta a `http`, `https`, `mailto` o `/`.
+- El número de WhatsApp se guarda solo con dígitos, como lo pide `wa.me`,
+  escríbalo el cliente como lo escriba.
+- Guardar el formulario de identidad sin volver a subir el logo no lo borra:
+  para sacarlo hay un botón propio.
 
 ---
 
@@ -395,5 +439,5 @@ En producción cambian tres cosas por su cuenta:
 | 8 | Tienda pública | ✅ |
 | 9 | Editor de apariencia | salteada en la ruta corta |
 | 10 | Clientes, pedidos y carrito | ✅ |
-| 11 | Contenido: banners, galerías, contacto, pagos, módulos | salteada en la ruta corta |
+| 11 | Contenido y configuración de la tienda | ✅ |
 | 12 | Producción | ✅ |

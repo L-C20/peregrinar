@@ -1121,3 +1121,103 @@ select.control {
     .ficha-linea { flex-direction: column; gap: 2px; }
     .ficha-linea__clave { flex: none; }
 }
+
+
+/* =====================================================
+   PIE DE TARJETA CON FORMULARIO
+   Las pantallas de configuración son formularios largos:
+   el botón de guardar va abajo de todo, siempre en el
+   mismo lugar, no flotando.
+   ===================================================== */
+
+.tarjeta__pie {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 18px;
+    border-top: 1px solid var(--ad-borde);
+    background: var(--ad-fondo);
+    border-radius: 0 0 var(--ad-radio) var(--ad-radio);
+}
+
+/* Un bloque dentro de una tarjeta se separa del anterior. */
+.tarjeta__cuerpo > .seccion {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--ad-borde);
+}
+
+/* El botón "Agregar" del encabezado va a la derecha. */
+.tarjeta__encabezado .boton { margin-left: auto; }
+
+
+/* =====================================================
+   EDITOR DE TEXTO CON FORMATO
+   Para las páginas de contenido.
+   ===================================================== */
+
+.editor {
+    border: 1px solid var(--ad-borde-fuerte);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--ad-superficie);
+}
+
+.editor:focus-within {
+    border-color: var(--ad-acento);
+    box-shadow: 0 0 0 3px var(--ad-acento-suave);
+}
+
+.editor__barra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+    border-bottom: 1px solid var(--ad-borde);
+    background: var(--ad-fondo);
+}
+
+.editor__boton {
+    min-width: 32px;
+    padding: 5px 9px;
+    border: 1px solid var(--ad-borde);
+    border-radius: 6px;
+    background: var(--ad-superficie);
+    font: inherit;
+    font-size: .8rem;
+    color: var(--ad-texto);
+    cursor: pointer;
+}
+
+.editor__boton:hover { background: var(--ad-fondo); }
+
+.editor__boton:focus-visible {
+    outline: 2px solid var(--ad-acento);
+    outline-offset: 1px;
+}
+
+.editor__area {
+    padding: 14px 16px;
+    font-size: .9rem;
+    line-height: 1.65;
+    overflow-y: auto;
+    outline: 0;
+}
+
+.editor__area:empty::before {
+    content: "Escribí acá el texto de la página…";
+    color: var(--ad-texto-suave);
+}
+
+.editor__area > :first-child { margin-top: 0; }
+.editor__area > :last-child { margin-bottom: 0; }
+
+.editor__area h3 {
+    margin: 20px 0 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.editor__area p { margin: 0 0 12px; }
+.editor__area ul, .editor__area ol { margin: 0 0 12px; padding-left: 22px; }
+.editor__area a { color: var(--ad-acento); }

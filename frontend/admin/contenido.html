@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Contenido · Panel</title>
+
+    <link rel="stylesheet" href="/shared/css/tokens.css">
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body" data-seccion="contenido" data-titulo="Contenido">
+
+    <main class="contenido" data-contenido>
+
+        <div class="pagina">
+            <div class="pagina__texto">
+                <h2 class="pagina__titulo">Contenido</h2>
+                <p class="pagina__ayuda" id="ayuda">
+                    Los textos y las imágenes de tu tienda. Lo que cambies acá se
+                    ve enseguida, sin que nadie tenga que tocar nada más.
+                </p>
+            </div>
+            <div class="pagina__acciones">
+                <button class="boton boton--primario" type="button" id="botonNuevo">
+                    Agregar
+                </button>
+            </div>
+        </div>
+
+        <div class="pestanas" id="pestanas"></div>
+
+        <div class="tabla-marco">
+            <div id="lista">
+                <div class="cargando"><span class="giro"></span></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/shared/js/sesion.js"></script>
+    <script src="/shared/js/api.js"></script>
+    <script src="/shared/js/notificaciones.js"></script>
+    <script src="js/comunes.js"></script>
+    <script src="js/cajon.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/contenido.js"></script>
+
+</body>
+</html>

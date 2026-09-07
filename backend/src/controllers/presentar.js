@@ -146,8 +146,116 @@ function imagenes(lista) {
 }
 
 
+// -----------------------------------------------------
+// CONTENIDO EDITABLE
+//
+// Banners y paginas de texto. La tienda publica arma su
+// propia respuesta en controllers/publico/tienda.js, mas
+// recortada; esto es lo que ve el panel, que necesita
+// tambien lo oculto y las fechas.
+// -----------------------------------------------------
+
+function banner(fila) {
+
+    if (!fila) return null;
+
+    return {
+        id: fila.id,
+        titulo: fila.titulo,
+        descripcion: fila.descripcion,
+        imagen_url: storage.url(fila.imagen),
+        texto_boton: fila.texto_boton,
+        enlace: fila.enlace,
+        ubicacion: fila.ubicacion,
+        orden: fila.orden,
+        activo: fila.activo,
+        created_at: fila.created_at,
+        updated_at: fila.updated_at
+    };
+}
+
+
+function banners(lista) {
+    return (lista || []).map(banner);
+}
+
+
+function paginaContenido(fila) {
+
+    if (!fila) return null;
+
+    return {
+        id: fila.id,
+        clave: fila.clave,
+        titulo: fila.titulo,
+        subtitulo: fila.subtitulo,
+        contenido: fila.contenido,
+        imagen_url: storage.url(fila.imagen),
+
+        // La direccion final, para poder mostrarsela al cliente
+        // y que sepa que enlace compartir.
+        url: `/p/${fila.clave}`,
+
+        activo: fila.activo,
+        created_at: fila.created_at,
+        updated_at: fila.updated_at
+    };
+}
+
+
+function paginasContenido(lista) {
+    return (lista || []).map(paginaContenido);
+}
+
+
+// -----------------------------------------------------
+// IDENTIDAD Y AJUSTES
+// Solo traduce las claves de archivo a URL; el resto de los
+// campos viaja tal cual.
+// -----------------------------------------------------
+
+function identidad(fila) {
+
+    if (!fila) return null;
+
+    return {
+        nombre_tienda: fila.nombre_tienda,
+        descripcion_tienda: fila.descripcion_tienda,
+        logo_url: storage.url(fila.logo),
+        favicon_url: storage.url(fila.favicon),
+        texto_bienvenida: fila.texto_bienvenida,
+        texto_subtitulo: fila.texto_subtitulo,
+        texto_boton_principal: fila.texto_boton_principal,
+        mensaje_destacado: fila.mensaje_destacado
+    };
+}
+
+
+function sitio(fila) {
+
+    if (!fila) return null;
+
+    return {
+        meta_titulo: fila.meta_titulo,
+        meta_descripcion: fila.meta_descripcion,
+        meta_palabras: fila.meta_palabras,
+        og_titulo: fila.og_titulo,
+        og_descripcion: fila.og_descripcion,
+        og_imagen_url: storage.url(fila.og_imagen),
+        moneda: fila.moneda,
+        simbolo_moneda: fila.simbolo_moneda,
+        zona_horaria: fila.zona_horaria,
+        aviso_superior: fila.aviso_superior,
+        aviso_activo: fila.aviso_activo
+    };
+}
+
+
 module.exports = {
     producto, productos,
     categoria, categorias,
-    imagen, imagenes
+    imagen, imagenes,
+    banner, banners,
+    paginaContenido, paginasContenido,
+    identidad, sitio
 };

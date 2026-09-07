@@ -51,8 +51,10 @@ window.EP = window.EP || {};
             titulo: "Mi tienda",
             enlaces: [
                 { id: "apariencia", texto: "Apariencia", icono: "apariencia", pronto: true },
-                { id: "contenido", texto: "Contenido", icono: "contenido", pronto: true },
-                { id: "configuracion", texto: "Configuración", icono: "configuracion", pronto: true }
+                { id: "contenido", texto: "Contenido", icono: "contenido",
+                  url: "/admin/contenido.html" },
+                { id: "configuracion", texto: "Configuración", icono: "configuracion",
+                  url: "/admin/configuracion.html" }
             ]
         }
     ];
