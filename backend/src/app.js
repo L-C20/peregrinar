@@ -200,6 +200,9 @@ app.get("/contacto", pagina("contacto.html"));
 app.get("/carrito", pagina("carrito.html"));
 
 // Autenticación
+app.get("/login", (req, res) =>
+    res.sendFile(path.join(FRONTEND, "auth", "index.html"))
+);
 app.get("/auth/pago-confirmado", (req, res) =>
     res.sendFile(path.join(FRONTEND, "auth", "pago-confirmado.html"))
 );
