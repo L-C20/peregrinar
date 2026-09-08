@@ -16,6 +16,7 @@ const express = require("express");
 const { autenticar } = require("../../middleware/auth");
 const { soloTienda, requirePermiso } = require("../../middleware/roles");
 const { moduloActivo } = require("../../middleware/modulo");
+const { validarSuscripcion } = require("../../middleware/validarSuscripcion");
 const { subirImagen, subirImagenes, subirCampos } = require("../../middleware/upload");
 
 const resumen = require("../../controllers/admin/resumen");
@@ -33,6 +34,7 @@ const router = express.Router();
 
 router.use(autenticar);
 router.use(soloTienda);
+router.use(validarSuscripcion);
 
 
 // =====================================================

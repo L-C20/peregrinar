@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Crea tu tienda online en minutos con LuCes Digital">
+    <title>LuCes Digital · Tu tienda online hecha simple</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1F2937;
+            background: #FFFFFF;
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #7C3AED;
+        }
+
+        nav a {
+            margin-left: 30px;
+            color: #6B7280;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: #7C3AED; }
+
+        .hero {
+            padding: 80px 40px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #6B7280;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: #7C3AED;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover { background: #6D28D9; }
+
+        .features {
+            padding: 80px 40px;
+            background: #F9FAFB;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .feature h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+
+        .feature p {
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        .pricing {
+            padding: 80px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .pricing h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #111827;
+        }
+
+        .price-card {
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+        }
+
+        .price-tag {
+            font-size: 48px;
+            font-weight: 700;
+            color: #7C3AED;
+            margin-bottom: 10px;
+        }
+
+        .price-currency {
+            font-size: 20px;
+            color: #6B7280;
+        }
+
+        .price-period {
+            font-size: 16px;
+            color: #6B7280;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .trial-badge {
+            display: inline-block;
+            background: #DBEAFE;
+            color: #0369A1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .price-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .price-features li {
+            padding: 12px 0;
+            color: #6B7280;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .price-features li:before {
+            content: "✓ ";
+            color: #10B981;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .start-button {
+            width: 100%;
+            padding: 16px;
+            background: #7C3AED;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .start-button:hover { background: #6D28D9; }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            color: #9CA3AF;
+            border-top: 1px solid #E5E7EB;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 20px; }
+            nav { margin-top: 20px; }
+            nav a { margin-left: 15px; margin-right: 15px; }
+            h1 { font-size: 32px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .hero { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">LuCes Digital</div>
+        <nav>
+            <a href="#precios">Precios</a>
+            <a href="#features">Características</a>
+            <a href="/login">Entrar</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Tu tienda online en minutos</h1>
+        <p class="subtitle">
+            Crea tu tienda, sube productos y empieza a vender. Sin complicaciones.
+            Todo lo que necesitas está incluido.
+        </p>
+        <button class="cta-button" onclick="irARegistro()">Crear mi tienda</button>
+    </div>
+
+    <div class="features" id="features">
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🏪</div>
+                <h3>Tienda lista</h3>
+                <p>Panel completo para manejar productos, pedidos y clientes</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Tu diseño</h3>
+                <p>Personaliza colores, tipografías y el estilo de tu tienda</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Siempre lista</h3>
+                <p>Tu tienda funciona perfecto en todos los dispositivos</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="pricing" id="precios">
+        <h2>Un precio simple</h2>
+        <div class="price-card">
+            <div class="trial-badge">7 días gratis</div>
+            <div class="price-tag">
+                $30.000<span class="price-currency">/mes</span>
+            </div>
+            <div class="price-period">Con tarjeta de crédito o débito</div>
+
+            <ul class="price-features">
+                <li>Catálogo ilimitado de productos</li>
+                <li>Gestión de pedidos</li>
+                <li>Panel de administración</li>
+                <li>Personalización de diseño</li>
+                <li>Subdominio en luces-digital.com</li>
+                <li>Soporte por email</li>
+            </ul>
+
+            <button class="start-button" onclick="irARegistro()">Crear tienda gratis</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 LuCes Digital. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        function irARegistro() {
+            window.location.href = "/auth/registro.html";
+        }
+    </script>
+</body>
+</html>

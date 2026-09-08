@@ -70,6 +70,11 @@ const config = {
         driver: texto("STORAGE_DRIVER", "local"),
         carpeta: texto("UPLOADS_DIR", "uploads"),
         maxMB: numero("MAX_UPLOAD_MB", 5)
+    },
+
+    mercadopago: {
+        accessToken: texto("MERCADOPAGO_ACCESS_TOKEN"),
+        publicKey: texto("MERCADOPAGO_PUBLIC_KEY")
     }
 
 };

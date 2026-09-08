@@ -15,9 +15,16 @@ const { tenantResolver } = require("../../middleware/tenantResolver");
 const { autenticar } = require("../../middleware/auth");
 const { limitarLogin } = require("../../middleware/limitarIntentos");
 const auth = require("../../controllers/auth");
+const registro = require("../../controllers/registro");
 
 
 const router = express.Router();
+
+
+// Registro y webhook NO usan tenantResolver (aún no existe la tienda)
+router.post("/registro", registro.registro);
+router.post("/webhook/mercadopago", registro.webhookMercadoPago);
+router.post("/confirmar-pago", registro.confirmarPago);
 
 
 // Qué tienda es, según el dominio por el que entró la visita.

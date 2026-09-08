@@ -26,6 +26,12 @@ const errores = {
     noAutenticado: (mensaje = "Necesitás iniciar sesión") =>
         new ErrorApp(mensaje, 401),
 
+    pago: (mensaje = "Pago requerido") =>
+        new ErrorApp(mensaje, 402),
+
+    noAutorizado: (mensaje = "No autorizado") =>
+        new ErrorApp(mensaje, 403),
+
     sinPermiso: (mensaje = "No tenés permiso para realizar esta acción") =>
         new ErrorApp(mensaje, 403),
 
@@ -36,7 +42,24 @@ const errores = {
         new ErrorApp(mensaje, 409, detalles),
 
     archivoGrande: (mensaje = "El archivo supera el tamaño máximo permitido") =>
-        new ErrorApp(mensaje, 413)
+        new ErrorApp(mensaje, 413),
+
+    error: (mensaje = "Error interno del servidor") =>
+        new ErrorApp(mensaje, 500),
+
+    responder: (res, err) => {
+        if (err.esErrorApp) {
+            return res.status(err.estado).json({
+                ok: false,
+                error: err.message,
+                detalles: err.detalles
+            });
+        }
+        return res.status(500).json({
+            ok: false,
+            error: "Error interno del servidor"
+        });
+    }
 
 };
 

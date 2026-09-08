@@ -70,23 +70,37 @@ app.use((req, res, next) => {
     //
     // 'unsafe-inline' en estilos es necesario: la apariencia de cada
     // tienda se aplica escribiendo variables CSS en el documento.
-    // En scripts NO está, que es donde importa.
-    res.set("Content-Security-Policy", [
-        "default-src 'self'",
-        "script-src 'self'",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-        "font-src 'self' https://fonts.gstatic.com",
-        // Las imágenes pueden venir de Cloudinary o de donde el
-        // cliente configure; blob: es para la vista previa al subir.
-        "img-src 'self' data: blob: https:",
-        "connect-src 'self'",
-        // El mapa de la página de contacto lo elige el cliente.
-        "frame-src https:",
-        "frame-ancestors 'none'",
-        "base-uri 'self'",
-        "form-action 'self'",
-        "object-src 'none'"
-    ].join("; "));
+    // En scripts también en desarrollo: los formularios usan event handlers.
+    if (config.esProduccion) {
+        res.set("Content-Security-Policy", [
+            "default-src 'self'",
+            "script-src 'self'",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "font-src 'self' https://fonts.gstatic.com",
+            "img-src 'self' data: blob: https:",
+            "connect-src 'self'",
+            "frame-src https:",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'"
+        ].join("; "));
+    } else {
+        // En desarrollo, permitir scripts inline para formularios dinámicos
+        res.set("Content-Security-Policy", [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "font-src 'self' https://fonts.gstatic.com",
+            "img-src 'self' data: blob: https:",
+            "connect-src 'self'",
+            "frame-src https:",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'"
+        ].join("; "));
+    }
 
     next();
 });
@@ -158,7 +172,8 @@ app.use("/uploads", express.static(UPLOADS, { maxAge: "7d" }));
 app.use("/shared", express.static(path.join(FRONTEND, "shared")));
 app.use("/assets", express.static(path.join(FRONTEND, "assets"), { maxAge: "7d" }));
 app.use("/admin", express.static(path.join(FRONTEND, "admin")));
-app.use("/login", express.static(path.join(FRONTEND, "auth")));
+app.use("/auth", express.static(path.join(FRONTEND, "auth")));
+app.use("/landing", express.static(path.join(FRONTEND, "landing")));
 app.use(express.static(PUBLICO));
 
 
@@ -183,6 +198,14 @@ app.get("/p/:clave", pagina("pagina.html"));
 app.get("/preguntas-frecuentes", pagina("faq.html"));
 app.get("/contacto", pagina("contacto.html"));
 app.get("/carrito", pagina("carrito.html"));
+
+// Autenticación
+app.get("/auth/pago-confirmado", (req, res) =>
+    res.sendFile(path.join(FRONTEND, "auth", "pago-confirmado.html"))
+);
+app.get("/auth/pago-fallido", (req, res) =>
+    res.sendFile(path.join(FRONTEND, "auth", "pago-fallido.html"))
+);
 
 
 // -----------------------------------------------------

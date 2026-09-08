@@ -46,6 +46,19 @@ async function porDominio(dominio) {
 }
 
 
+async function crear(datos) {
+
+    const resultado = await query(`
+        INSERT INTO tenants (nombre, slug, estado, plan)
+        VALUES ($1, $2, $3, $4)
+        RETURNING ${CAMPOS}
+    `, [datos.nombre, datos.slug, 'activo', 'starter']);
+
+    cacheTenants.limpiar();
+    return resultado.rows[0];
+}
+
+
 async function porSlug(slug) {
 
     return cacheTenants.recordar(`slug:${slug}`, async () => {
@@ -123,6 +136,7 @@ function olvidar(tenant) {
 
 
 module.exports = {
+    crear,
     porDominio,
     porSlug,
     porId,
