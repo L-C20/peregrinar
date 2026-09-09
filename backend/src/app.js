@@ -22,7 +22,7 @@ const app = express();
 
 const fs = require("fs");
 
-// Buscar frontend en múltiples ubicaciones (según cómo Railway lo copie)
+// Buscar frontend en múltiples ubicaciones
 const posiblesFrontend = [
     path.resolve(__dirname, "../../frontend"),     // Local: proyecto/frontend
     path.join(__dirname, "../frontend"),            // Railway con rootDir=backend
@@ -36,6 +36,8 @@ for (const ubicacion of posiblesFrontend) {
         break;
     }
 }
+
+console.log("[DEBUG] FRONTEND resuelto a:", FRONTEND);
 
 const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
