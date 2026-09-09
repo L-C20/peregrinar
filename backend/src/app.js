@@ -20,13 +20,25 @@ const {
 
 const app = express();
 
+const fs = require("fs");
+
 const RAIZ = path.resolve(__dirname, "../../");
 let FRONTEND = path.resolve(RAIZ, "frontend");
 
-// En Railway con rootDir=backend, frontend se copia a backend/frontend
-if (!require("fs").existsSync(FRONTEND)) {
+// Debug: listar qué hay en diferentes ubicaciones
+console.log("[DEBUG] Buscando frontend en:", FRONTEND);
+console.log("[DEBUG] ¿Existe?", fs.existsSync(FRONTEND));
+
+// Si no existe en la ubicación normal, buscar en backend/frontend
+if (!fs.existsSync(FRONTEND)) {
     FRONTEND = path.join(__dirname, "..", "frontend");
+    console.log("[DEBUG] Intentando ubicación alternativa:", FRONTEND);
+    console.log("[DEBUG] ¿Existe?", fs.existsSync(FRONTEND));
 }
+
+// Si aún no existe, listar qué hay en backend/
+const backendPath = path.join(__dirname, "..");
+console.log("[DEBUG] Contenido de backend/:", fs.readdirSync(backendPath));
 
 const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
