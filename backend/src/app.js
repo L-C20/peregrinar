@@ -22,22 +22,10 @@ const app = express();
 
 const fs = require("fs");
 
-// Buscar frontend en múltiples ubicaciones
-const posiblesFrontend = [
-    path.resolve(__dirname, "../../frontend"),     // Local: proyecto/frontend
-    path.join(__dirname, "../frontend"),            // Railway con rootDir=backend
-    path.resolve(__dirname, "../../../frontend"),   // Railway rootDir=.
-];
-
-let FRONTEND = posiblesFrontend[0];
-for (const ubicacion of posiblesFrontend) {
-    if (fs.existsSync(ubicacion)) {
-        FRONTEND = ubicacion;
-        break;
-    }
-}
-
-console.log("[DEBUG] FRONTEND resuelto a:", FRONTEND);
+// Frontend está en backend/frontend (copiado por build.js en Railway)
+// o en ../../frontend (en desarrollo local)
+const RAIZ = path.resolve(__dirname, "../../");
+const FRONTEND = path.resolve(__dirname, "../frontend");
 
 const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
