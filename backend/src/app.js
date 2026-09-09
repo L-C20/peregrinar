@@ -22,10 +22,18 @@ const app = express();
 
 const fs = require("fs");
 
-// Frontend está en backend/frontend (copiado por build.js en Railway)
-// o en ../../frontend (en desarrollo local)
-const RAIZ = path.resolve(__dirname, "../../");
-const FRONTEND = path.resolve(__dirname, "../frontend");
+const candidatos = [
+    path.join(__dirname, "..", "backend", "frontend"),  // Railway: /app/backend/frontend
+    path.resolve(__dirname, "../../frontend"),           // Local: frontend/
+];
+
+let FRONTEND = candidatos[0];
+for (const c of candidatos) {
+    if (fs.existsSync(c)) {
+        FRONTEND = c;
+        break;
+    }
+}
 
 const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
