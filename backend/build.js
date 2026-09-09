@@ -2,14 +2,22 @@
 const fs = require("fs");
 const path = require("path");
 
-// Copiar frontend si existe
 const frontendSrc = path.join(__dirname, "../frontend");
 const frontendDst = path.join(__dirname, "frontend");
 
-if (fs.existsSync(frontendSrc) && !fs.existsSync(frontendDst)) {
-    console.log("Copiando frontend...");
-    fs.cpSync(frontendSrc, frontendDst, { recursive: true });
-    console.log("Frontend copiado");
-} else if (!fs.existsSync(frontendSrc)) {
-    console.log("Advertencia: frontend no encontrado en", frontendSrc);
+console.log("[BUILD] __dirname:", __dirname);
+console.log("[BUILD] Buscando frontend en:", frontendSrc);
+console.log("[BUILD] ¿Existe frontend src?", fs.existsSync(frontendSrc));
+console.log("[BUILD] ¿Existe frontend dst?", fs.existsSync(frontendDst));
+
+if (fs.existsSync(frontendSrc)) {
+    if (!fs.existsSync(frontendDst)) {
+        console.log("[BUILD] Copiando frontend...");
+        fs.cpSync(frontendSrc, frontendDst, { recursive: true });
+        console.log("[BUILD] Frontend copiado correctamente");
+    } else {
+        console.log("[BUILD] Frontend ya existe en destino");
+    }
+} else {
+    console.log("[BUILD] ⚠ ADVERTENCIA: frontend no encontrado en:", frontendSrc);
 }
