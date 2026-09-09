@@ -21,12 +21,14 @@ const {
 const app = express();
 
 const RAIZ = path.resolve(__dirname, "../../");
-const FRONTEND = path.resolve(RAIZ, "frontend");
-const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
+let FRONTEND = path.resolve(RAIZ, "frontend");
 
-console.log("[DEBUG] __dirname:", __dirname);
-console.log("[DEBUG] RAIZ:", RAIZ);
-console.log("[DEBUG] FRONTEND:", FRONTEND);
+// En Railway con rootDir=backend, frontend se copia a backend/frontend
+if (!require("fs").existsSync(FRONTEND)) {
+    FRONTEND = path.join(__dirname, "..", "frontend");
+}
+
+const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
 
 // -----------------------------------------------------
