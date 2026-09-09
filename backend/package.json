@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
-    "prepare-build": "node -e \"const fs=require('fs'), path=require('path'); const src = path.join(__dirname, '../frontend'); const dst = path.join(__dirname, 'frontend'); if(fs.existsSync(src) && !fs.existsSync(dst)) { fs.cpSync(src, dst, {recursive: true}); console.log('Frontend copied'); }\"",
+    "build": "node build.js",
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "migrate": "node src/database/migrate.js",
