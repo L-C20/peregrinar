@@ -24,6 +24,10 @@ const RAIZ = path.resolve(__dirname, "../../");
 const FRONTEND = path.resolve(RAIZ, "frontend");
 const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
+console.log("[DEBUG] __dirname:", __dirname);
+console.log("[DEBUG] RAIZ:", RAIZ);
+console.log("[DEBUG] FRONTEND:", FRONTEND);
+
 
 // -----------------------------------------------------
 // DETRAS DE UN PROXY
