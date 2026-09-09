@@ -14,15 +14,26 @@ const { probarConexion, pool } = require("./database/connection");
 // la primera subida, el problema aparecería recién en producción.
 const storage = require("./storage");
 
-// En Railway, copiar frontend si no existe
-const frontendSrc = path.resolve(__dirname, "../../frontend");
-const frontendDst = path.resolve(__dirname, "../frontend");
-if (fs.existsSync(frontendSrc) && !fs.existsSync(frontendDst)) {
-    try {
-        fs.cpSync(frontendSrc, frontendDst, { recursive: true });
-        logger.info("Frontend copiado desde raíz del proyecto");
-    } catch (e) {
-        logger.aviso("No se pudo copiar frontend:", e.message);
+// En Railway, copiar frontend si no existe en backend/frontend
+// Buscar fuentes posibles: ../../frontend (local) o ../frontend (railway con raíz en /app/)
+const posiblesSrc = [
+    path.resolve(__dirname, "../../frontend"),    // Local: frontend/
+    path.resolve(__dirname, "../frontend"),       // Railway raíz /app/: /app/frontend
+];
+const frontendDst = path.resolve(__dirname, "../backend/frontend");
+
+// Solo copiar si el destino no existe
+if (!fs.existsSync(frontendDst)) {
+    for (const src of posiblesSrc) {
+        if (fs.existsSync(src)) {
+            try {
+                fs.cpSync(src, frontendDst, { recursive: true });
+                console.log("[STARTUP] Frontend copiado de", src, "a", frontendDst);
+                break;
+            } catch (e) {
+                console.log("[STARTUP] Error copiando de", src, ":", e.message);
+            }
+        }
     }
 }
 
