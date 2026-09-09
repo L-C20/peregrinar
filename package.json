@@ -1,0 +1,10 @@
+{
+  "name": "peregrinar-platform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd backend && npm ci && npm run migrate",
+    "dev": "cd backend && npm run dev"
+  }
+}
