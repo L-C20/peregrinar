@@ -20,8 +20,8 @@ const {
 
 const app = express();
 
-const RAIZ = path.join(__dirname, "../..");
-const FRONTEND = path.join(RAIZ, "frontend");
+const RAIZ = path.resolve(__dirname, "../../");
+const FRONTEND = path.resolve(RAIZ, "frontend");
 const UPLOADS = path.join(__dirname, "..", config.almacenamiento.carpeta);
 
 
