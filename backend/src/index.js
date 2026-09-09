@@ -14,25 +14,34 @@ const { probarConexion, pool } = require("./database/connection");
 // la primera subida, el problema aparecería recién en producción.
 const storage = require("./storage");
 
-// En Railway, copiar frontend si no existe en backend/frontend
-// Buscar fuentes posibles: ../../frontend (local) o ../frontend (railway con raíz en /app/)
+// Buscar y copiar frontend
 const posiblesSrc = [
     path.resolve(__dirname, "../../frontend"),    // Local: frontend/
-    path.resolve(__dirname, "../frontend"),       // Railway raíz /app/: /app/frontend
+    path.resolve(__dirname, "../frontend"),       // Railway /app/frontend
 ];
-const frontendDst = path.resolve(__dirname, "../backend/frontend");
+const frontendDst = path.join(__dirname, "../frontend");
 
-// Solo copiar si el destino no existe
-if (!fs.existsSync(frontendDst)) {
-    for (const src of posiblesSrc) {
-        if (fs.existsSync(src)) {
-            try {
-                fs.cpSync(src, frontendDst, { recursive: true });
-                console.log("[STARTUP] Frontend copiado de", src, "a", frontendDst);
+console.log("[STARTUP] __dirname:", __dirname);
+console.log("[STARTUP] Buscando frontend en:");
+for (const src of posiblesSrc) {
+    const existe = fs.existsSync(src);
+    console.log("[STARTUP]  -", src, "existe:", existe);
+}
+
+// Copiar si fuente existe y destino no, o si destino está vacío
+for (const src of posiblesSrc) {
+    if (fs.existsSync(src)) {
+        try {
+            if (!fs.existsSync(frontendDst) || fs.readdirSync(frontendDst).length === 0) {
+                fs.cpSync(src, frontendDst, { recursive: true, force: true });
+                console.log("[STARTUP] ✓ Frontend copiado de", src);
                 break;
-            } catch (e) {
-                console.log("[STARTUP] Error copiando de", src, ":", e.message);
+            } else {
+                console.log("[STARTUP] Frontend ya existe en", frontendDst);
+                break;
             }
+        } catch (e) {
+            console.log("[STARTUP] Error:", e.message);
         }
     }
 }
